@@ -3,64 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Master - CapCut Style</title>
+    <title>AI Master - Video Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: white; }
         .logo-font { font-family: 'Poppins', sans-serif; }
-        .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(24px); }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
         .neon { text-shadow: 0 0 15px #00f5ff, 0 0 30px #00f5ff; }
-        .asset-card:hover { transform: scale(1.05); }
-        .user-icon { width:32px;height:32px;background:linear-gradient(135deg,#334155,#1e2937);border-radius:9999px;display:flex;align-items:center;justify-content:center;color:#67e8f9;font-size:18px; }
+        .asset-card { transition: all 0.3s ease; }
+        .asset-card:hover { transform: scale(1.06); box-shadow: 0 0 25px rgba(0,245,255,0.4); }
+        .video-wrapper { box-shadow: 0 0 60px rgba(0,245,255,0.3); }
+        .timeline { scrollbar-width: none; }
+        .timeline::-webkit-scrollbar { display: none; }
+        .modal { animation: pop 0.3s ease-out; }
+        @keyframes pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .user-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #334155, #1e293b); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #67e8f9; font-size: 18px; }
     </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen overflow-hidden flex flex-col">
+<body class="min-h-screen overflow-hidden flex flex-col">
 
-    <!-- TOP NAV + LEFT ASSETS + MAIN EDITOR + RIGHT PANEL + MOBILE BAR + DUBBING MODAL -->
-    <!-- (আগের সব UI একই রাখা হয়েছে, শুধু dubbing অংশ real করা হয়েছে) -->
+    <!-- TOP NAV -->
+    <nav class="bg-zinc-900/90 border-b border-zinc-800/70 backdrop-blur-md h-14 flex items-center px-4 md:px-6 justify-between z-50 fixed w-full">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center text-xl font-bold logo-font shadow-lg">AI</div>
+            <span class="text-2xl font-bold tracking-tight neon logo-font">AI MASTER</span>
+        </div>
+
+        <div class="hidden md:flex items-center bg-zinc-800/80 rounded-2xl p-1 text-sm font-medium">
+            <button onclick="switchPage(0)" id="tab-0" class="tab-btn active px-5 py-2 rounded-xl">Editor</button>
+            <button onclick="switchPage(1)" id="tab-1" class="tab-btn px-5 py-2 rounded-xl">Templates</button>
+            <button onclick="switchPage(2)" id="tab-2" class="tab-btn px-5 py-2 rounded-xl">AI Tools</button>
+            <button onclick="switchPage(3)" id="tab-3" class="tab-btn px-5 py-2 rounded-xl">Projects</button>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button onclick="exportVideo()" class="bg-white text-black font-bold px-5 py-2 rounded-2xl flex items-center gap-2 text-sm hover:scale-105 transition">
+                <i class="fa-solid fa-download"></i> Export
+            </button>
+            <div class="w-8 h-8 bg-zinc-800 rounded-xl flex items-center justify-center cursor-pointer"><i class="fa-solid fa-bell"></i></div>
+            <div onclick="showProfile()" class="flex items-center gap-2 cursor-pointer">
+                <div class="user-icon"><i class="fa-solid fa-user"></i></div>
+                <div class="hidden md:block">
+                    <p class="text-sm font-medium">মোঃ রহমান</p>
+                    <p class="text-xs text-emerald-400">Pro</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex flex-1 pt-14 overflow-hidden flex-col md:flex-row">
+        <!-- LEFT ASSETS -->
+        <div class="w-full md:w-72 bg-zinc-900 border-b md:border-r border-zinc-800 flex flex-col h-80 md:h-auto overflow-hidden">
+            <div class="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950">
+                <span class="font-semibold flex items-center gap-2"><i class="fa-solid fa-images"></i> Assets</span>
+                <button onclick="importMedia()" class="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-3 grid grid-cols-2 md:grid-cols-1 gap-3" id="assets-grid"></div>
+        </div>
+
+        <!-- MAIN EDITOR -->
+        <div class="flex-1 flex flex-col bg-black relative">
+            <div class="flex-1 flex items-center justify-center p-4">
+                <div class="video-wrapper relative w-full max-w-3xl aspect-video bg-zinc-950 rounded-2xl overflow-hidden shadow-2xl">
+                    <video id="main-video" class="w-full h-full object-cover" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny_720p.mp4" loop muted></video>
+                    <div class="absolute inset-0 flex flex-col justify-between p-6">
+                        <div class="flex justify-between">
+                            <div class="bg-black/50 px-4 py-1 rounded-full text-sm flex items-center gap-2">
+                                <span id="current-time">00:00</span> / <span id="total-time">00:00</span>
+                            </div>
+                            <div onclick="aiEnhance()" class="bg-gradient-to-r from-cyan-500 to-purple-600 px-4 py-1 rounded-full text-sm font-medium cursor-pointer hover:scale-105 transition">
+                                <i class="fa-solid fa-magic"></i> Enhance
+                            </div>
+                        </div>
+                        <button onclick="togglePlay()" class="mx-auto text-6xl opacity-70 hover:opacity-100 transition">
+                            <i id="play-btn" class="fa-solid fa-play"></i>
+                        </button>
+                        <input type="range" id="seek-bar" class="w-full accent-cyan-400" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIMELINE -->
+            <div class="h-48 bg-zinc-900 border-t border-zinc-800 p-4 flex flex-col">
+                <div class="flex justify-between mb-2 text-sm">
+                    <div class="flex gap-4">
+                        <button onclick="addTrack()" class="text-cyan-400 hover:text-cyan-300"><i class="fa-solid fa-plus"></i> Track</button>
+                        <button onclick="zoomTimeline()" class="text-cyan-400 hover:text-cyan-300"><i class="fa-solid fa-magnifying-glass"></i> Zoom</button>
+                    </div>
+                    <span id="timeline-time" class="font-mono text-cyan-400">00:00 / 00:00</span>
+                </div>
+                <div class="flex-1 bg-zinc-950 rounded-xl p-3 overflow-x-auto timeline relative" id="timeline"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="w-full md:w-80 bg-zinc-900 border-t md:border-l border-zinc-800 flex flex-col h-80 md:h-auto overflow-hidden">
+            <div class="flex border-b border-zinc-800 text-sm">
+                <button onclick="switchRightTab(0)" id="right-tab-0" class="right-tab active flex-1 py-4 font-medium">Effects</button>
+                <button onclick="switchRightTab(1)" id="right-tab-1" class="right-tab flex-1 py-4 font-medium">Text</button>
+                <button onclick="switchRightTab(2)" id="right-tab-2" class="right-tab flex-1 py-4 font-medium">AI</button>
+            </div>
+            <div class="flex-1 p-4 overflow-y-auto" id="right-panel">
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="glass p-4 rounded-xl text-center hover:bg-zinc-800 transition">Fade</button>
+                    <button class="glass p-4 rounded-xl text-center hover:bg-zinc-800 transition">Glitch</button>
+                    <button class="glass p-4 rounded-xl text-center hover:bg-zinc-800 transition">Slow</button>
+                    <button class="glass p-4 rounded-xl text-center hover:bg-zinc-800 transition">VHS</button>
+                </div>
+            </div>
+            <div class="p-4 border-t border-zinc-800 grid grid-cols-2 gap-3">
+                <button onclick="autoCut()" class="bg-emerald-600 hover:bg-emerald-700 py-3 rounded-xl text-sm">Auto Cut</button>
+                <button onclick="autoCaption()" class="bg-pink-600 hover:bg-pink-700 py-3 rounded-xl text-sm">Auto Caption</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DUBBING MODAL -->
+    <div id="dubbing-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+        <div class="bg-zinc-900 w-full max-w-lg mx-4 rounded-2xl overflow-hidden modal">
+            <div class="p-6 border-b border-zinc-800 flex justify-between items-center">
+                <span class="font-bold text-xl">ভিডিও ডাবিং</span>
+                <button onclick="closeDubbingModal()" class="text-3xl leading-none hover:text-red-400">×</button>
+            </div>
+            <div class="p-6">
+                <textarea id="dub-text" rows="5" class="w-full bg-zinc-800 rounded-xl p-4 text-sm focus:outline-none resize-none" placeholder="এখানে যে টেক্সট ডাব করতে চান লিখুন..."></textarea>
+                <button onclick="generateDubbing()" class="mt-6 w-full bg-gradient-to-r from-purple-600 to-cyan-600 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 hover:scale-105 transition">
+                    <i class="fa-solid fa-microphone-lines"></i> GENERATE & ADD VOICE
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // loadAssets, importMedia, togglePlay, switchPage ইত্যাদি সব আগের মতোই আছে
-        // শুধু generateDubbing আপডেট করা হয়েছে
+        const video = document.getElementById('main-video');
+        let isPlaying = false;
+
+        async function loadAssets() {
+            const grid = document.getElementById('assets-grid');
+            grid.innerHTML = '<p class="text-center py-10">Loading assets...</p>';
+            try {
+                const res = await fetch('/api/assets');
+                const data = await res.json();
+                grid.innerHTML = '';
+                data.forEach(asset => {
+                    let preview = asset.type === 'image' ? `<img src="${asset.url}" class="w-full h-40 object-cover rounded-xl">` :
+                                  asset.type === 'video' ? `<video src="${asset.url}" class="w-full h-40 object-cover rounded-xl" muted></video>` :
+                                  asset.type === 'audio' ? `<div class="h-40 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center text-5xl">🎵</div>` :
+                                  `<div class="h-40 bg-zinc-800 rounded-xl flex items-center justify-center text-4xl">📄<br><small>${asset.name}</small></div>`;
+                    grid.innerHTML += `<div class="asset-card bg-zinc-800 rounded-xl overflow-hidden cursor-pointer" onclick="addToTimeline('\( {asset.url}')"> \){preview}<p class="text-center py-2 text-xs truncate">${asset.name}</p></div>`;
+                });
+            } catch (e) {
+                grid.innerHTML = '<p class="text-center py-10 text-red-400">Failed to load assets</p>';
+            }
+        }
+
+        function importMedia() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '*/*';
+            input.onchange = async e => {
+                const formData = new FormData();
+                for (let file of e.target.files) formData.append('files', file);
+                try {
+                    const res = await fetch('/upload', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        alert(`${data.uploaded.length} files added!`);
+                        loadAssets();
+                    }
+                } catch (err) {
+                    alert('Upload failed');
+                }
+            };
+            input.click();
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                video.pause();
+                document.getElementById('play-btn').classList.replace('fa-pause', 'fa-play');
+            } else {
+                video.play();
+                document.getElementById('play-btn').classList.replace('fa-play', 'fa-pause');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function openDubbingModal() {
+            document.getElementById('dubbing-modal').classList.remove('hidden');
+            document.getElementById('dubbing-modal').classList.add('flex');
+        }
+
+        function closeDubbingModal() {
+            document.getElementById('dubbing-modal').classList.add('hidden');
+            document.getElementById('dubbing-modal').classList.remove('flex');
+        }
 
         async function generateDubbing() {
             const text = document.getElementById('dub-text').value.trim();
-            if (!text) return alert("টেক্সট লিখুন");
+            if (!text) return alert("লিখুন কিছু");
 
             const btn = event.target;
-            btn.innerHTML = 'Generating...';
             btn.disabled = true;
+            btn.innerHTML = 'Generating...';
 
             try {
                 const res = await fetch('/api/generate-dub', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text})
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    alert('✅ Bengali Voice তৈরি হয়েছে!');
-                    const audio = new Audio(data.audio_url);
-                    audio.play();
+                    alert('Voice generated!');
+                    new Audio(data.audio_url).play();
                 } else {
                     alert('Error: ' + data.error);
                 }
             } catch (err) {
-                alert('সার্ভার সমস্যা');
+                alert('Connection issue');
             }
 
-            btn.innerHTML = 'GENERATE VOICE';
             btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-microphone-lines"></i> GENERATE VOICE';
             closeDubbingModal();
         }
 
-        // অন্য সব ফাংশন (togglePlay, loadAssets, importMedia ইত্যাদি) আগের মতোই রাখো
-        window.onload = () => {
+        function exportVideo() { alert("Exporting..."); }
+        function aiEnhance() { alert("Enhancing..."); }
+        function autoCut() { alert("Auto cut done"); }
+        function autoCaption() { alert("Auto caption added"); }
+        function addTrack() { alert("Track added"); }
+        function zoomTimeline() { alert("Zoomed"); }
+        function addToTimeline(url) { alert(`Added: ${url}`); }
+        function showProfile() { alert("Pro User"); }
+
+        function switchPage(page) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + page).classList.add('active');
+        }
+
+        function switchRightTab(tab) {
+            document.querySelectorAll('.right-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('right-tab-' + tab).classList.add('active');
+        }
+
+        // Video player logic
+        video.addEventListener('timeupdate', () => {
+            document.getElementById('seek-bar').value = video.duration ? (video.currentTime / video.duration) * 100 : 0;
+            document.getElementById('current-time').textContent = formatTime(video.currentTime);
+        });
+
+        document.getElementById('seek-bar').addEventListener('input', function() {
+            if (video.duration) video.currentTime = (this.value / 100) * video.duration;
+        });
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `\( {m}: \){sec.toString().padStart(2, '0')}`;
+        }
+
+        function init() {
             loadAssets();
-            console.log("%cAI Master - Final Free Version Ready", "color:#00f5ff;font-size:16px");
-        };
+            console.log("%cAI Master - Final Free Version", "color:#00f5ff;font-size:16px");
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
