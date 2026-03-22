@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Master - Real CapCut + Hugging Face AI</title>
+    <title>AI Master - Real Video Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
@@ -12,14 +12,8 @@
         .logo-font { font-family: 'Poppins', sans-serif; }
         .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(24px); }
         .neon { text-shadow: 0 0 15px #00f5ff, 0 0 30px #00f5ff; }
-        .asset-card { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-        .asset-card:hover { transform: scale(1.05) rotate(1deg); }
-        .video-wrapper { box-shadow: 0 0 80px rgba(0,245,255,0.4); }
-        .timeline { scrollbar-width: none; }
-        .timeline::-webkit-scrollbar { display: none; }
-        .modal { animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-        @keyframes modalPop { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
-        .user-icon { width:32px; height:32px; background:linear-gradient(135deg,#334155,#1e2937); border-radius:9999px; display:flex; align-items:center; justify-content:center; color:#67e8f9; font-size:18px; }
+        .asset-card:hover { transform: scale(1.05); }
+        .user-icon { width:32px;height:32px;background:linear-gradient(135deg,#334155,#1e2937);border-radius:9999px;display:flex;align-items:center;justify-content:center;color:#67e8f9;font-size:18px; }
     </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen overflow-hidden flex flex-col">
@@ -41,7 +35,7 @@
 
         <div class="flex items-center gap-4">
             <button onclick="exportVideo()" class="bg-white text-black font-bold px-6 py-2 rounded-3xl flex items-center gap-2 text-sm hover:scale-105 transition-all">
-                <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">EXPORT MP4</span>
+                <i class="fa-solid fa-download"></i> EXPORT MP4
             </button>
             <div class="w-8 h-8 bg-zinc-800 rounded-2xl flex items-center justify-center cursor-pointer"><i class="fa-solid fa-bell"></i></div>
             <div onclick="showProfile()" class="flex items-center gap-2 cursor-pointer">
@@ -82,7 +76,7 @@
                         <div class="flex justify-between items-center">
                             <button onclick="togglePlay()" class="text-3xl"><i id="play-btn" class="fa-solid fa-play"></i></button>
                             <button onclick="openDubbingModal()" class="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-3xl text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-microphone"></i> <span class="hidden sm:inline">ভিডিও ডাবিং</span>
+                                <i class="fa-solid fa-microphone"></i> ভিডিও ডাবিং
                             </button>
                         </div>
                     </div>
@@ -125,21 +119,25 @@
         <button onclick="switchPage(3)" class="flex flex-col items-center"><i class="fa-solid fa-folder text-lg"></i><span>Projects</span></button>
     </div>
 
-    <!-- DUBBING MODAL (Hugging Face Ready) -->
+    <!-- DUBBING MODAL -->
     <div id="dubbing-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[999]">
         <div class="bg-zinc-900 w-full max-w-md mx-4 rounded-3xl overflow-hidden modal">
             <div class="p-6 border-b border-zinc-800 flex justify-between">
-                <span class="font-bold text-xl">ভিডিও ডাবিং (Hugging Face AI)</span>
+                <span class="font-bold text-xl">ভিডিও ডাবিং (Real AI Voice)</span>
                 <button onclick="closeDubbingModal()" class="text-3xl leading-none">×</button>
             </div>
             <div class="p-6">
                 <textarea id="dub-text" rows="4" class="w-full bg-zinc-800 rounded-2xl p-4 text-sm focus:outline-none resize-none" placeholder="এখানে বাংলা টেক্সট লিখুন..."></textarea>
                 <div class="mt-6 grid grid-cols-2 gap-4">
-                    <div onclick="selectVoice(1)" class="voice-option glass p-4 rounded-2xl text-center cursor-pointer border border-transparent hover:border-cyan-400" id="voice-1"><span class="text-2xl">🧔</span><br><span class="text-xs">Male Bengali</span></div>
-                    <div onclick="selectVoice(2)" class="voice-option glass p-4 rounded-2xl text-center cursor-pointer border border-transparent hover:border-cyan-400" id="voice-2"><span class="text-2xl">👩</span><br><span class="text-xs">Female Bengali</span></div>
+                    <div onclick="selectVoice(1)" class="voice-option glass p-4 rounded-2xl text-center cursor-pointer border border-transparent hover:border-cyan-400" id="voice-1">
+                        <span class="text-2xl">🧔</span><br><span class="text-xs">Male</span>
+                    </div>
+                    <div onclick="selectVoice(2)" class="voice-option glass p-4 rounded-2xl text-center cursor-pointer border border-transparent hover:border-cyan-400" id="voice-2">
+                        <span class="text-2xl">👩</span><br><span class="text-xs">Female</span>
+                    </div>
                 </div>
                 <button onclick="generateDubbing()" class="mt-8 w-full bg-gradient-to-r from-purple-500 to-cyan-500 py-5 rounded-3xl font-bold text-lg flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-microphone-lines"></i> Hugging Face দিয়ে তৈরি করুন
+                    <i class="fa-solid fa-microphone-lines"></i> GENERATE VOICE
                 </button>
             </div>
         </div>
@@ -150,72 +148,146 @@
         const video = document.getElementById('main-video');
 
         async function loadAssets() {
+            const grid = document.getElementById('assets-grid');
+            grid.innerHTML = '<p class="text-center py-10">Assets loading...</p>';
             try {
                 const res = await fetch('/api/assets');
                 const data = await res.json();
-                const grid = document.getElementById('assets-grid');
                 grid.innerHTML = '';
                 data.forEach(asset => {
-                    let preview = asset.type === 'image' ? `<img src="${asset.url}" class="w-full h-40 object-cover rounded-2xl">` :
-                                  asset.type === 'video' ? `<video src="${asset.url}" class="w-full h-40 object-cover rounded-2xl" muted></video>` :
-                                  asset.type === 'audio' ? `<div class="h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-6xl">🎵</div>` :
-                                  `<div class="h-40 bg-zinc-700 rounded-2xl flex items-center justify-center text-4xl">📄<br><small>${asset.name}</small></div>`;
+                    let preview = '';
+                    if (asset.type === 'image') preview = `<img src="${asset.url}" class="w-full h-40 object-cover rounded-2xl">`;
+                    else if (asset.type === 'video') preview = `<video src="${asset.url}" class="w-full h-40 object-cover rounded-2xl" muted></video>`;
+                    else if (asset.type === 'audio') preview = `<div class="h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-6xl">🎵</div>`;
+                    else preview = `<div class="h-40 bg-zinc-700 rounded-2xl flex items-center justify-center text-4xl">📄<br><small>${asset.name}</small></div>`;
                     grid.innerHTML += `<div class="asset-card bg-zinc-800 rounded-3xl overflow-hidden cursor-pointer" onclick="addToTimeline('\( {asset.url}')"> \){preview}<p class="text-center py-2 text-xs truncate">${asset.name}</p></div>`;
                 });
-            } catch(e) { console.error(e); }
+            } catch (err) {
+                grid.innerHTML = '<p class="text-center py-10 text-red-400">Assets load failed</p>';
+            }
         }
 
         function importMedia() {
             const input = document.createElement('input');
-            input.type = 'file'; input.multiple = true; input.accept = '*/*';
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '*/*';
             input.onchange = async e => {
                 const formData = new FormData();
                 for (let file of e.target.files) formData.append('files', file);
-                const res = await fetch('/upload', {method: 'POST', body: formData});
-                const data = await res.json();
-                if (data.status === 'success') {
-                    alert(`${data.uploaded.length} ফাইল আপলোড হয়েছে`);
-                    loadAssets();
+                try {
+                    const res = await fetch('/upload', {method: 'POST', body: formData});
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        alert(`${data.uploaded.length} ফাইল আপলোড হয়েছে`);
+                        loadAssets();
+                    }
+                } catch (err) {
+                    alert('আপলোড ব্যর্থ');
                 }
             };
             input.click();
         }
 
-        function togglePlay() { /* same as before */ if(isPlaying){video.pause();document.getElementById('play-btn').classList.replace('fa-pause','fa-play');}else{video.play();document.getElementById('play-btn').classList.replace('fa-play','fa-pause');} isPlaying=!isPlaying; }
-        function openDubbingModal() { document.getElementById('dubbing-modal').classList.remove('hidden'); document.getElementById('dubbing-modal').classList.add('flex'); }
-        function closeDubbingModal() { document.getElementById('dubbing-modal').classList.add('hidden'); document.getElementById('dubbing-modal').classList.remove('flex'); }
-        function selectVoice(v) { selectedVoice = v; document.querySelectorAll('.voice-option').forEach(el=>el.classList.remove('border-cyan-400')); document.getElementById('voice-'+v).classList.add('border-cyan-400'); }
+        function togglePlay() {
+            if (isPlaying) {
+                video.pause();
+                document.getElementById('play-btn').classList.replace('fa-pause', 'fa-play');
+            } else {
+                video.play();
+                document.getElementById('play-btn').classList.replace('fa-play', 'fa-pause');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function openDubbingModal() {
+            document.getElementById('dubbing-modal').classList.remove('hidden');
+            document.getElementById('dubbing-modal').classList.add('flex');
+        }
+
+        function closeDubbingModal() {
+            document.getElementById('dubbing-modal').classList.add('hidden');
+            document.getElementById('dubbing-modal').classList.remove('flex');
+        }
+
+        function selectVoice(v) {
+            selectedVoice = v;
+            document.querySelectorAll('.voice-option').forEach(el => el.classList.remove('border-cyan-400'));
+            document.getElementById('voice-' + v).classList.add('border-cyan-400');
+        }
 
         async function generateDubbing() {
-            const text = document.getElementById('dub-text').value || "আপনার ডাবিং টেক্সট";
-            const res = await fetch('/api/generate-dub-hf', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({text})});
-            const data = await res.json();
-            if(data.status==='success') {
-                alert('Hugging Face দিয়ে বাংলা ভয়েস তৈরি হয়েছে!');
-                new Audio(data.audio_url).play();
-            } else alert('Error: '+data.error);
+            const text = document.getElementById('dub-text').value.trim() || "আপনার ডাবিং টেক্সট";
+            if (!text) return alert("কিছু লিখুন");
+
+            const status = document.getElementById('dub-text');
+            status.disabled = true;
+            status.value += "\n\nGenerating voice...";
+
+            try {
+                const res = await fetch('/api/generate-dub', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text})
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    alert('Voice generated!');
+                    const audio = new Audio(data.audio_url);
+                    audio.play();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Connection error');
+            }
+
+            status.disabled = false;
             closeDubbingModal();
         }
 
-        // অন্য সব ফাংশন (exportVideo, aiEnhance, switchPage ইত্যাদি) আগের মতো রাখো
-        function exportVideo(){alert("Exporting...");}
-        function aiEnhance(){alert("AI Enhance চলছে...");}
-        function autoCut(){alert("Auto Cut সম্পন্ন");}
-        function autoCaption(){alert("Auto Caption যোগ হয়েছে");}
-        function addTrack(){alert("নতুন Track যোগ হয়েছে");}
-        function zoomTimeline(){alert("Timeline Zoomed");}
-        function addToTimeline(url){alert("টাইমলাইনে যোগ হয়েছে");}
-        function showProfile(){alert("Real Pro User");}
-        function switchPage(page){/* same */ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.getElementById('tab-'+page).classList.add('active');}
-        function switchRightTab(tab){/* same */ document.querySelectorAll('.right-tab').forEach(b=>b.classList.remove('active')); document.getElementById('right-tab-'+tab).classList.add('active');}
+        function exportVideo() { alert("Exporting video... (demo)"); }
+        function aiEnhance() { alert("AI Enhancement running..."); }
+        function autoCut() { alert("Auto Cut complete"); }
+        function autoCaption() { alert("Auto Caption added (বাংলা)"); }
+        function addTrack() { alert("New track added"); }
+        function zoomTimeline() { alert("Timeline zoomed"); }
+        function addToTimeline(url) { alert(`Added: ${url}`); }
+        function showProfile() { alert("Real Pro Account"); }
 
-        // Video time + seek
-        video.addEventListener('timeupdate', () => { document.getElementById('seek-bar').value = video.duration ? (video.currentTime/video.duration)*100 : 0; document.getElementById('current-time').textContent = formatTime(video.currentTime); });
-        document.getElementById('seek-bar').addEventListener('input', function(){ if(video.duration) video.currentTime = (this.value/100)*video.duration; });
-        function formatTime(s){ const m=Math.floor(s/60); const sec=Math.floor(s%60); return `\( {m}: \){sec<10?'0':''}${sec}`; }
+        function switchPage(page) {
+            currentPage = page;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + page).classList.add('active');
+        }
 
-        function init(){ loadAssets(); console.log("%c✅ AI Master Full Updated (Hugging Face Ready)", "color:#00f5ff;font-size:16px"); }
+        function switchRightTab(tab) {
+            document.querySelectorAll('.right-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('right-tab-' + tab).classList.add('active');
+        }
+
+        // Video player logic
+        video.addEventListener('timeupdate', () => {
+            document.getElementById('seek-bar').value = video.duration ? (video.currentTime / video.duration) * 100 : 0;
+            document.getElementById('current-time').textContent = formatTime(video.currentTime);
+        });
+
+        document.getElementById('seek-bar').addEventListener('input', function() {
+            if (video.duration) video.currentTime = (this.value / 100) * video.duration;
+        });
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `\( {m}: \){sec.toString().padStart(2, '0')}`;
+        }
+
+        function init() {
+            loadAssets();
+            console.log("%cAI Master - Deploy Ready for Render.com", "color:#00f5ff;font-size:16px");
+        }
+
         window.onload = init;
     </script>
 </body>
-        </html>
+</html>
