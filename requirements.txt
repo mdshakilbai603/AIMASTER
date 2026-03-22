@@ -1,6 +1,3 @@
 flask==3.0.3
 gunicorn==22.0.0
-transformers
-torch --index-url https://download.pytorch.org/whl/cpu
-torchaudio
-soundfile
+edge-tts==7.2.7
