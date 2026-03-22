@@ -1,146 +1,90 @@
 import os
-import traceback
+import asyncio
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+import edge_tts
 
 app = Flask(__name__)
 
-# ==================== CONFIG ====================
-# Render Disk Mount Path — Dashboard > Disks > Mount Path-এ যা লেখা আছে সেটা এখানে ব্যবহার করো
-# সবচেয়ে নিরাপদ ও সাধারণ: '/data'
+# Render Disk mount path — অবশ্যই Dashboard > Disks > Mount Path-এ /data করো
 UPLOAD_FOLDER = '/data'
 
-# Disk path initialization with safe handling
-upload_folder_status = "Not initialized"
+# Disk safe initialization
 try:
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    upload_folder_status = f"Upload folder OK: {UPLOAD_FOLDER}"
-    print(upload_folder_status)
-except PermissionError as e:
-    upload_folder_status = f"Permission denied on {UPLOAD_FOLDER}: {e} → Using memory-only (temporary)"
-    print(upload_folder_status)
-    print("SOLUTION: Go to Render Dashboard → Disks → Add/Edit Disk → Mount Path must be exactly '/data'")
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    print(f"Upload folder ready: {UPLOAD_FOLDER}")
 except Exception as e:
-    upload_folder_status = f"Disk setup failed: {e}"
-    print(upload_folder_status)
+    print(f"Disk warning: {e} — continuing without persistent storage")
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# ==================== Hugging Face TTS (Bengali) ====================
-HF_READY = False
-model = None
-tokenizer = None
-sampling_rate = None
-
-try:
-    from transformers import VitsModel, AutoTokenizer
-    import torch
-    import soundfile as sf
-
-    print("Loading Hugging Face MMS-TTS-Bengali model...")
-    tokenizer = AutoTokenizer.from_pretrained("facebook/mms-tts-ben")
-    model = VitsModel.from_pretrained("facebook/mms-tts-ben")
-    sampling_rate = model.config.sampling_rate
-    HF_READY = True
-    print("Hugging Face TTS model loaded successfully (CPU mode)")
-except Exception as e:
-    print(f"Hugging Face load failed: {e}")
-    print("Requirements: transformers, torch, torchaudio, soundfile must be in requirements.txt")
-    HF_READY = False
-
-# ==================== ROUTES ====================
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'files' not in request.files:
-        return jsonify({'error': 'No files part'}), 400
-
+        return jsonify({'error': 'No files'}), 400
+    
     files = request.files.getlist('files')
     uploaded = []
-
+    
     for file in files:
-        if file.filename == '':
-            continue
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        try:
+        if file.filename:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             uploaded.append(filename)
-        except Exception as save_err:
-            print(f"Save failed for {filename}: {save_err}")
-
+    
     return jsonify({'status': 'success', 'uploaded': uploaded})
-
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    try:
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 404
-
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/api/assets')
 def get_assets():
     try:
         files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if not f.startswith('.')]
-    except Exception as e:
-        print(f"Cannot list directory {UPLOAD_FOLDER}: {e}")
+    except:
         files = []
-
+    
     assets = []
     for f in files:
         ext = os.path.splitext(f)[1].lower()
         typ = 'file'
-        if ext in ['.mp4', '.mov', '.webm', '.avi']: typ = 'video'
-        elif ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']: typ = 'image'
-        elif ext in ['.mp3', '.wav', '.ogg', '.m4a']: typ = 'audio'
-
-        assets.append({
-            'name': f,
-            'url': f'/uploads/{f}',
-            'type': typ
-        })
+        if ext in ['.mp4', '.mov', '.webm']: typ = 'video'
+        elif ext in ['.jpg', '.jpeg', '.png', '.gif']: typ = 'image'
+        elif ext in ['.mp3', '.wav']: typ = 'audio'
+        assets.append({'name': f, 'url': f'/uploads/{f}', 'type': typ})
+    
     return jsonify(assets)
 
-
-@app.route('/api/generate-dub-hf', methods=['POST'])
-def generate_dub_hf():
-    if not HF_READY:
-        return jsonify({'error': 'Hugging Face libraries or model not loaded'}), 503
-
+# Bengali TTS using edge-tts (very lightweight)
+@app.route('/api/generate-dub', methods=['POST'])
+def generate_dub():
     data = request.get_json()
     text = data.get('text', 'আপনার ডাবিং টেক্সট এখানে লিখুন')
-
-    if not text.strip():
-        return jsonify({'error': 'Text is empty'}), 400
-
+    
     try:
-        inputs = tokenizer(text, return_tensors="pt")
-        with torch.no_grad():
-            output = model(**inputs).waveform
-
-        audio_filename = f"dub_{hash(text)}.wav"
-        audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
-
-        sf.write(audio_path, output.squeeze().cpu().numpy(), samplerate=sampling_rate)
-
+        voice = "bn-BD-NabanitaNeural"  # Female Bengali (very natural)
+        communicate = edge_tts.Communicate(text, voice)
+        audio_path = os.path.join(app.config['UPLOAD_FOLDER'], "dub_output.mp3")
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(communicate.save(audio_path))
+        loop.close()
+        
         return jsonify({
             'status': 'success',
-            'audio_url': f'/uploads/{audio_filename}',
-            'message': 'Hugging Face AI দিয়ে বাংলা ভয়েস তৈরি হয়েছে'
+            'audio_url': '/uploads/dub_output.mp3',
+            'message': 'Bengali voice generated using Microsoft Edge TTS'
         })
     except Exception as e:
-        traceback.print_exc()
-        return jsonify({'error': f'TTS generation failed: {str(e)}'}), 500
-
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port)
