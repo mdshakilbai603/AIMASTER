@@ -3,171 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master Pro | Airtel Edition</title>
+    <title>AI Master | GSAP Orbital Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Syncopate:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;900&display=swap');
         
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; margin: 0; }
 
-        /* --- AIRTEL STYLE COOL STARTUP --- */
-        #airtel-boot {
+        /* --- GSAP RING BOOT ANIMATION --- */
+        #ring-loader {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .airtel-ring {
-            width: 150px; height: 150px; border-radius: 50%;
-            border: 2px solid #ff0000; box-shadow: 0 0 50px #ff0000;
-            position: relative; animation: rotate 3s linear infinite;
+        .orbital-ring {
+            width: 200px; height: 200px; border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
         }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        .shakil-brand {
-            font-family: 'Syncopate', sans-serif; font-size: 30px; font-weight: 700;
-            background: linear-gradient(to right, #ff0000, #fff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            opacity: 0; margin-top: 30px; letter-spacing: 10px;
+        .glow-dot {
+            width: 8px; height: 8px; background: #ff0000; border-radius: 50%;
+            position: absolute; top: -4px; left: 50%; box-shadow: 0 0 20px #ff0000;
+        }
+        .shakil-text {
+            font-family: 'Syncopate', sans-serif; font-size: 28px; letter-spacing: 12px;
+            opacity: 0; transform: translateY(20px); text-transform: uppercase;
         }
 
-        /* --- THE COOL UI DESIGN --- */
-        .neon-card { background: rgba(255, 0, 0, 0.05); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px; }
-        .main-app { padding: 10px; height: 100vh; display: flex; flex-direction: column; opacity: 0; }
+        /* --- THE NEW DESIGN (AIRTEL COOL LOOK) --- */
+        .glass-orb { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; }
+        .main-app { padding: 15px; height: 100vh; display: flex; flex-direction: column; opacity: 0; }
         
-        /* Timeline - Smartphone OS Style */
-        .timeline-container { height: 210px; background: #0a0000; border-radius: 45px 45px 0 0; position: relative; overflow-x: auto; border-top: 2px solid #220000; padding: 20px; }
-        .playhead { position: absolute; top: 0; bottom: 0; width: 4px; background: #ff0000; z-index: 100; box-shadow: 0 0 25px #ff0000; border-radius: 20px; }
-        .track-row { height: 50px; background: rgba(255,255,255,0.02); margin: 10px 0; border-radius: 15px; position: relative; min-width: 5000px; }
-        .clip-bar { position: absolute; height: 40px; top: 5px; background: linear-gradient(90deg, #ff0000, #ff8c00); border-radius: 12px; color: #fff; font-size: 10px; font-weight: 900; display: flex; align-items: center; padding: 0 20px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2); }
+        /* Premium Timeline */
+        .timeline-box { height: 220px; background: #050505; border-radius: 50px 50px 0 0; position: relative; overflow-x: auto; border-top: 1px solid #111; }
+        .playhead-line { position: absolute; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #ff0000, transparent); z-index: 100; box-shadow: 0 0 15px #ff0000; }
+        .track-strip { height: 45px; background: rgba(255,255,255,0.01); margin: 12px 0; border-radius: 12px; position: relative; min-width: 5000px; }
+        .clip-neon { position: absolute; height: 35px; top: 5px; background: linear-gradient(90deg, #ff0000, #330000); border-radius: 10px; color: #fff; font-size: 9px; font-weight: 900; display: flex; align-items: center; padding: 0 20px; border-left: 3px solid #fff; }
 
-        .btn-cool { background: linear-gradient(135deg, #ff0000, #8b0000); color: #fff; font-weight: 900; padding: 15px 35px; border-radius: 100px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3); }
-        .btn-cool:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255, 0, 0, 0.5); }
+        .btn-shakil { background: #fff; color: #000; font-weight: 900; padding: 14px 30px; border-radius: 100px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
+        .btn-shakil:hover { background: #ff0000; color: #fff; transform: scale(1.05); }
     </style>
 </head>
 <body>
 
-    <div id="airtel-boot">
-        <div class="airtel-ring"></div>
-        <h1 class="shakil-brand" id="b-text">SHAKIL</h1>
+    <div id="ring-loader">
+        <div class="orbital-ring" id="ring1"><div class="glow-dot"></div></div>
+        <div class="orbital-ring" id="ring2" style="width: 160px; height: 160px; border-color: #ff000033;"></div>
+        <h1 class="shakil-text" id="s-text">SHAKIL</h1>
     </div>
 
-    <div class="main-app" id="os-ui">
+    <div class="main-app" id="app-ui">
         <header class="h-24 flex items-center justify-between px-10">
-            <div class="flex items-center gap-5">
-                <div class="w-12 h-12 rounded-2xl bg-red-600 flex items-center justify-center text-2xl font-black italic">S</div>
-                <h2 class="text-xs font-bold tracking-[8px] text-zinc-400">MASTER AI</h2>
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center font-black">S</div>
+                <h2 class="text-[10px] font-light tracking-[10px] text-zinc-500 uppercase">Airtel AI Master</h2>
             </div>
-            <div class="flex gap-5">
-                <button onclick="openDub()" class="btn-cool">AI Dubbing</button>
-                <button onclick="exportVideo()" class="w-14 h-14 neon-card flex items-center justify-center text-xl text-red-500"><i class="fa-solid fa-download"></i></button>
+            <div class="flex gap-4">
+                <button onclick="openDub()" class="btn-shakil">AI Voice Sync</button>
+                <button onclick="exportVideo()" class="w-14 h-14 glass-orb flex items-center justify-center text-zinc-400"><i class="fa-solid fa-plus"></i></button>
             </div>
         </header>
 
-        <main class="flex-1 flex flex-col md:flex-row gap-5 p-4 overflow-hidden">
-            <div class="flex-[2] neon-card relative flex items-center justify-center overflow-hidden">
-                <video id="vid" class="max-w-full max-h-full rounded-3xl" playsinline></video>
-                <div class="absolute bottom-12 flex gap-16 bg-black/60 backdrop-blur-3xl px-14 py-6 rounded-full border border-red-900/30">
-                    <button onclick="toggle()" class="text-3xl text-white active:scale-90 transition"><i id="p-ico" class="fa-solid fa-play"></i></button>
+        <main class="flex-1 flex flex-col md:flex-row gap-4 p-2 overflow-hidden">
+            <div class="flex-[3] glass-orb relative flex items-center justify-center overflow-hidden bg-black/40">
+                <video id="v-player" class="max-w-full max-h-full rounded-3xl" playsinline></video>
+                <div class="absolute bottom-10 flex gap-12 bg-black/60 backdrop-blur-3xl px-12 py-5 rounded-full border border-white/5">
+                    <button onclick="toggle()" class="text-2xl text-white"><i id="p-ico" class="fa-solid fa-play"></i></button>
                 </div>
             </div>
 
-            <aside class="flex-1 neon-card p-8 flex flex-col gap-6">
-                <div onclick="document.getElementById('fin').click()" class="border-2 border-dashed border-red-900/50 rounded-[40px] p-12 text-center cursor-pointer hover:border-red-500 transition-all bg-red-500/5">
-                    <i class="fa-solid fa-bolt-lightning text-4xl mb-4 text-red-600"></i>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400">Add Magic Clip</p>
+            <aside class="flex-1 glass-orb p-8 flex flex-col gap-6">
+                <div onclick="document.getElementById('f-in').click()" class="border border-white/5 rounded-[40px] p-12 text-center cursor-pointer hover:bg-white/5 transition-all">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl mb-4 text-zinc-700"></i>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Import Media</p>
                 </div>
-                <input type="file" id="fin" class="hidden" onchange="upload(this)">
-                <div id="status" class="text-[9px] text-red-900 font-bold uppercase text-center mt-5">System Ready</div>
+                <input type="file" id="f-in" class="hidden" onchange="upload(this)">
+                <div id="f-name" class="text-[10px] text-zinc-600 uppercase text-center font-bold tracking-tighter">No Active File</div>
             </aside>
         </main>
 
-        <div class="timeline-container" id="tl" onclick="seek(event)">
-            <div id="playhead" class="playhead"></div>
-            <div class="px-24">
-                <div id="t1" class="track-row"></div>
-                <div id="t2" class="track-row"></div>
+        <div class="timeline-box" id="tl-scroll" onclick="seek(event)">
+            <div id="playhead" class="playhead-line"></div>
+            <div class="px-24 py-10">
+                <div id="v-track" class="track-strip"></div>
+                <div id="a-track" class="track-strip"></div>
             </div>
-            <div id="clk" class="absolute bottom-6 left-12 text-sm font-black text-red-600 tracking-tighter italic">00:00:00</div>
+            <div id="clock" class="absolute bottom-6 left-10 text-xs font-mono text-zinc-700">00:00:00</div>
         </div>
     </div>
 
-    <div id="d-modal" class="hidden fixed inset-0 bg-black/95 z-[11000] flex items-center justify-center p-10 backdrop-blur-3xl">
-        <div class="neon-card w-full max-w-xl p-16 border-red-600/20">
-            <h3 class="text-3xl font-black italic tracking-tighter mb-10 text-red-600">VOICE SYNC</h3>
-            <textarea id="d-in" class="w-full bg-black/40 border border-red-900/30 p-10 rounded-[40px] text-lg h-56 mb-12 focus:border-red-500 outline-none text-white shadow-inner" placeholder="Enter script here..."></textarea>
-            <div class="flex gap-8">
-                <button onclick="closeDub()" class="text-xs font-black text-zinc-700 uppercase tracking-widest">Cancel</button>
-                <button onclick="runDub()" id="d-btn" class="flex-1 btn-cool py-6">Apply AI Magic</button>
+    <div id="dub-modal" class="hidden fixed inset-0 bg-black/98 z-[11000] flex items-center justify-center p-8 backdrop-blur-3xl">
+        <div class="glass-orb w-full max-w-lg p-14 text-center border-white/10">
+            <h3 class="text-xl font-light tracking-[15px] mb-10 uppercase">AI SYNC ENGINE</h3>
+            <textarea id="dub-in" class="w-full bg-transparent border border-white/5 p-8 rounded-[35px] text-sm h-48 mb-10 focus:border-red-600 outline-none text-white shadow-2xl" placeholder="লিখুন..."></textarea>
+            <div class="flex gap-6">
+                <button onclick="closeDub()" class="flex-1 text-[10px] font-bold text-zinc-600 uppercase">Back</button>
+                <button onclick="runDub()" id="d-btn" class="flex-[2] btn-shakil">Generate & Merge</button>
             </div>
         </div>
     </div>
 
     <script>
-        const vid = document.getElementById('vid');
+        const v = document.getElementById('v-player');
         const pIco = document.getElementById('p-ico');
         const phead = document.getElementById('playhead');
-        const clk = document.getElementById('clk');
+        const clock = document.getElementById('clock');
 
-        // Startup Animation
+        // GSAP Orbital Startup
         window.onload = () => {
+            gsap.to("#ring1", { duration: 4, rotate: 360, repeat: -1, ease: "none" });
+            gsap.to("#ring2", { duration: 3, rotate: -360, repeat: -1, ease: "none" });
+            
             const tl = gsap.timeline();
-            tl.to("#b-text", { duration: 1.5, opacity: 1, letterSpacing: "2px", ease: "power4.out" })
-              .to("#airtel-boot", { duration: 1.2, scale: 2, opacity: 0, display: "none", ease: "expo.inOut", delay: 1 })
-              .to("#os-ui", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
+            tl.to("#s-text", { duration: 1.5, opacity: 1, y: 0, ease: "power4.out", delay: 0.5 })
+              .to("#ring-loader", { duration: 1.5, scale: 3, opacity: 0, display: "none", ease: "expo.inOut", delay: 1 })
+              .to("#app-ui", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
         };
 
         function toggle() {
-            if(!vid.src) return;
-            if(vid.paused) { vid.play(); pIco.className = 'fa-solid fa-pause'; }
-            else { vid.pause(); pIco.className = 'fa-solid fa-play'; }
+            if(!v.src) return;
+            if(v.paused) { v.play(); pIco.className = 'fa-solid fa-pause'; }
+            else { v.pause(); pIco.className = 'fa-solid fa-play'; }
         }
 
         async function upload(input) {
-            const file = input.files[0];
             const fd = new FormData();
-            fd.append('files', file);
+            fd.append('files', input.files[0]);
             const res = await fetch('/upload', { method: 'POST', body: fd });
             const data = await res.json();
-            vid.src = data.files[0].url;
-            document.getElementById('status').innerText = "Clip: " + file.name;
-            document.getElementById('t1').innerHTML = `<div class="clip-bar w-[3000px]">${file.name}</div>`;
-            vid.play(); pIco.className = 'fa-solid fa-pause';
+            v.src = data.files[0].url;
+            document.getElementById('f-name').innerText = input.files[0].name;
+            document.getElementById('v-track').innerHTML = `<div class="clip-neon w-[4000px]">${input.files[0].name}</div>`;
+            v.play(); pIco.className = 'fa-solid fa-pause';
         }
 
-        vid.ontimeupdate = () => {
-            const t = vid.currentTime;
-            phead.style.left = (t * 60 + 96) + "px"; // 60px/sec
-            clk.innerText = new Date(t * 1000).toISOString().substr(11, 8);
+        v.ontimeupdate = () => {
+            const t = v.currentTime;
+            phead.style.left = (t * 50 + 96) + "px";
+            clock.innerText = new Date(t * 1000).toISOString().substr(11, 8);
         };
 
         function seek(e) {
-            const x = e.clientX - document.getElementById('tl').getBoundingClientRect().left + document.getElementById('tl').scrollLeft - 96;
-            vid.currentTime = x / 60;
+            const x = e.clientX - document.getElementById('tl-scroll').getBoundingClientRect().left + document.getElementById('tl-scroll').scrollLeft - 96;
+            v.currentTime = x / 50;
         }
 
-        function openDub() { document.getElementById('d-modal').classList.remove('hidden'); }
-        function closeDub() { document.getElementById('d-modal').classList.add('hidden'); }
+        function openDub() { document.getElementById('dub-modal').classList.remove('hidden'); }
+        function closeDub() { document.getElementById('dub-modal').classList.add('hidden'); }
 
         async function runDub() {
             const btn = document.getElementById('d-btn');
-            btn.innerText = "Syncing AI...";
+            btn.innerText = "Syncing...";
             const res = await fetch('/api/generate-dub', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ text: document.getElementById('d-in').value })
+                body: JSON.stringify({ text: document.getElementById('dub-in').value })
             });
             const data = await res.json();
             new Audio(data.audio_url).play();
-            document.getElementById('t2').innerHTML += `<div class="clip-bar" style="left:${vid.currentTime*60}px; background:#fff; color:#000">AI SYNC</div>`;
-            btn.innerText = "Apply AI Magic";
+            document.getElementById('a-track').innerHTML += `<div class="clip-neon" style="left:${v.currentTime*50}px; background:#fff; color:#000; border:none">AI SYNC</div>`;
+            btn.innerText = "Generate & Merge";
             closeDub();
         }
 
         function exportVideo() {
             const a = document.createElement('a');
-            a.href = vid.src; a.download = "Final_Studio.mp4"; a.click();
+            a.href = v.src; a.download = "Shakil_AI_Master.mp4"; a.click();
         }
     </script>
 </body>
