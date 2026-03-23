@@ -6,8 +6,8 @@ import edge_tts
 
 app = Flask(__name__)
 
-# Render-এর জন্য Safe Temporary Path
-UPLOAD_FOLDER = os.environ.get("RENDER_DISK_PATH", "/tmp/uploads")
+# Render-এর জন্য স্টোরেজ সেটআপ
+UPLOAD_FOLDER = "/tmp/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -17,16 +17,12 @@ def home():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'files' not in request.files:
-        return jsonify({'error': 'No files part'}), 400
-    
     files = request.files.getlist('files')
     uploaded = []
     for file in files:
         if file.filename:
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             uploaded.append(filename)
     return jsonify({'status': 'success', 'uploaded': uploaded})
 
@@ -34,28 +30,18 @@ def upload_file():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/api/assets')
-def get_assets():
-    try:
-        files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if not f.startswith('.')]
-        assets = []
-        for f in files:
-            ext = os.path.splitext(f)[1].lower()
-            typ = 'video' if ext in ['.mp4', '.webm'] else 'image' if ext in ['.jpg', '.png'] else 'audio' if ext in ['.mp3', '.wav'] else 'file'
-            assets.append({'name': f, 'url': f'/uploads/{f}', 'type': typ})
-        return jsonify(assets)
-    except:
-        return jsonify([])
-
+# Auto & Manual Dubbing API
 @app.route('/api/generate-dub', methods=['POST'])
 def generate_dub():
     data = request.get_json()
     text = data.get('text', '')
-    if not text: return jsonify({'error': 'No text'}), 400
+    gender = data.get('gender', 'female') # 'male' বা 'female' বেছে নেওয়া
+    
+    # ছেলে ও মেয়ের জন্য প্রিমিয়াম বাংলা ভয়েস
+    voice = "bn-BD-PradeepNeural" if gender == "male" else "bn-BD-NabanitaNeural"
     
     try:
-        voice = "bn-BD-NabanitaNeural" # ন্যাচারাল ফিমেইল ভয়েস 
-        output_name = f"dub_{os.urandom(4).hex()}.mp3"
+        output_name = f"dub_{os.urandom(3).hex()}.mp3"
         audio_path = os.path.join(app.config['UPLOAD_FOLDER'], output_name)
         
         communicate = edge_tts.Communicate(text, voice)
