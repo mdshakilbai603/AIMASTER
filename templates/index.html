@@ -2,166 +2,345 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master - Pro Video Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Master Pro | Edited by Shakil</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
     <style>
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; touch-action: manipulation; }
-        .editor-grid { display: grid; grid-template-rows: auto 1fr auto; height: 100vh; }
-        .preview-area { background: #090909; display: flex; align-items: center; justify-content: center; position: relative; }
-        .timeline-box { background: #111; height: 260px; border-top: 1px solid #333; overflow-x: auto; position: relative; }
-        .track { height: 50px; background: #1a1a1a; margin-bottom: 5px; position: relative; min-width: 2000px; border-radius: 4px; }
-        .clip { position: absolute; height: 40px; background: #2dd4bf; border-radius: 6px; color: #000; font-size: 10px; font-weight: bold; display: flex; align-items: center; padding: 0 10px; cursor: pointer; }
-        .audio-clip { background: #a855f7; color: #fff; }
-        .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #ff4757; z-index: 100; left: 0; pointer-events: none; }
-        /* Mobile optimization */
-        @media (max-width: 768px) { .sidebar { display: none; } .timeline-box { height: 200px; } }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap');
+        
+        :root {
+            --accent: #00f5ff;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Intro Animation Styles */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shakil-text {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #fff, var(--accent), #fff);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s infinite linear;
+            letter-spacing: -2px;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Global UI Elements */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+        }
+
+        /* Timeline Logic */
+        .timeline-scroll {
+            height: 250px;
+            background: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .track-layer {
+            height: 44px;
+            background: rgba(255,255,255,0.02);
+            margin: 8px 0;
+            border-radius: 8px;
+            min-width: 5000px;
+            position: relative;
+        }
+
+        .clip-element {
+            position: absolute;
+            height: 34px;
+            top: 5px;
+            background: linear-gradient(90deg, #00f5ff, #0072ff);
+            border-radius: 6px;
+            padding: 0 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .audio-clip {
+            background: linear-gradient(90deg, #bf5af2, #5e5ce6);
+            color: white;
+        }
+
+        .playhead-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ff3b30;
+            z-index: 50;
+            box-shadow: 0 0 10px #ff3b30;
+        }
+
+        /* Floating Nav */
+        .nav-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
-<body class="editor-grid">
+<body>
 
-    <header class="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4">
-        <div class="flex items-center gap-2">
-            <span class="text-cyan-400 font-black text-xl">AI</span>
-            <span class="font-bold text-sm tracking-tighter uppercase">Master Editor</span>
+    <div id="intro-overlay">
+        <div class="animate__animated animate__zoomIn">
+            <h2 class="text-zinc-500 uppercase tracking-[10px] text-xs mb-2 text-center">Presented By</h2>
+            <h1 class="shakil-text">SHAKIL</h1>
         </div>
-        <div class="flex gap-2">
-            <button onclick="openDubModal()" class="bg-purple-600 px-4 py-1.5 rounded-full text-[11px] font-bold shadow-lg shadow-purple-900/40">AI DUBBING</button>
-            <button class="bg-white text-black px-4 py-1.5 rounded-full text-[11px] font-bold">EXPORT</button>
+        <div class="mt-8 flex items-center gap-2 animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="h-[1px] w-12 bg-zinc-800"></div>
+            <span class="text-cyan-400 font-bold tracking-widest text-sm">AI MASTER PRO</span>
+            <div class="h-[1px] w-12 bg-zinc-800"></div>
         </div>
-    </header>
+    </div>
 
-    <main class="flex flex-1 overflow-hidden">
-        <aside class="w-64 bg-zinc-950 border-r border-zinc-800 p-4 sidebar overflow-y-auto">
-            <button onclick="document.getElementById('file-input').click()" class="w-full py-6 border-2 border-dashed border-zinc-800 rounded-2xl hover:border-cyan-500 transition mb-6">
-                <i class="fa-solid fa-plus block text-xl mb-1"></i> <span class="text-xs">Import Media</span>
-            </button>
-            <input type="file" id="file-input" class="hidden" onchange="uploadFile(this)">
-            <div id="media-list" class="space-y-3"></div>
-        </aside>
-
-        <section class="flex-1 preview-area">
-            <div class="w-full max-w-[80%] aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative border border-white/5">
-                <video id="main-player" class="w-full h-full object-contain"></video>
-                <div id="video-overlay-text" class="absolute inset-0 flex items-center justify-center pointer-events-none text-2xl font-bold"></div>
+    <div class="flex flex-col h-screen opacity-0" id="main-content">
+        
+        <nav class="h-16 px-6 flex items-center justify-between border-b border-white/5 bg-black/50 backdrop-blur-md z-40">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center neon-glow">
+                    <i class="fa-solid fa-bolt text-black text-xl"></i>
+                </div>
+                <div class="hidden md:block">
+                    <span class="block text-sm font-black tracking-tighter">AI MASTER PRO</span>
+                    <span class="block text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Editor v3.0</span>
+                </div>
             </div>
-            
-            <div class="absolute bottom-6 flex gap-6 bg-black/40 backdrop-blur-xl p-4 rounded-full border border-white/10">
-                <button onclick="rewind()"><i class="fa-solid fa-backward"></i></button>
-                <button onclick="togglePlay()" class="text-2xl text-cyan-400"><i id="play-icon" class="fa-solid fa-play"></i></button>
-                <button onclick="forward()"><i class="fa-solid fa-forward"></i></button>
+
+            <div class="flex items-center gap-2 bg-zinc-900/50 p-1 rounded-full border border-white/5">
+                <button onclick="openDubModal()" class="px-6 py-2 rounded-full text-[11px] font-bold bg-white text-black hover:bg-cyan-400 transition">
+                    <i class="fa-solid fa-microphone-sparkles mr-2"></i> AI DUBBING
+                </button>
+                <button class="px-6 py-2 rounded-full text-[11px] font-bold text-zinc-400 hover:text-white transition">EXPORT</button>
             </div>
-        </section>
-    </main>
+        </nav>
 
-    <footer class="timeline-box" id="timeline-scroll">
-        <div class="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 sticky left-0 z-20">
-            <span id="time-display" class="text-[10px] text-zinc-500 font-mono">00:00:00</span>
-        </div>
-        <div class="relative p-4">
-            <div id="playhead" class="playhead"></div>
-            <div class="text-[9px] text-zinc-600 mb-1 uppercase font-bold">Video Layer</div>
-            <div id="video-track" class="track"></div>
-            
-            <div class="text-[9px] text-zinc-600 mb-1 uppercase font-bold mt-4">AI Dubbing Layer</div>
-            <div id="audio-track" class="track"></div>
-        </div>
-    </footer>
+        <div class="flex flex-1 overflow-hidden">
+            <aside class="w-20 md:w-72 border-r border-white/5 p-4 flex flex-col gap-6">
+                <div class="space-y-2">
+                    <h3 class="text-[10px] font-bold text-zinc-600 uppercase ml-2 mb-4">Toolbar</h3>
+                    <button onclick="document.getElementById('file-in').click()" class="w-full py-4 glass-panel border-dashed border-zinc-800 hover:border-cyan-500 flex flex-col items-center group transition">
+                        <i class="fa-solid fa-plus text-zinc-600 group-hover:text-cyan-400"></i>
+                        <span class="text-[10px] mt-2 text-zinc-500">Media</span>
+                    </button>
+                    <input type="file" id="file-in" class="hidden" multiple onchange="handleFile(this)">
+                </div>
 
-    <div id="dub-modal" class="hidden fixed inset-0 bg-black/95 z-[500] flex items-center justify-center p-4 backdrop-blur-lg">
-        <div class="w-full max-w-lg bg-zinc-900 p-8 rounded-[2rem] border border-white/10">
-            <h2 class="text-2xl font-bold mb-4">Auto AI Dubbing <span class="text-cyan-400">Pro</span></h2>
-            <p class="text-zinc-500 text-xs mb-6 uppercase tracking-widest">Select Mode & Voice</p>
-            
-            <textarea id="dub-text" class="w-full h-32 bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-cyan-500 text-sm mb-6" placeholder="এখানে ডায়ালগটি লিখুন (ভিডিওর সাথে সিঙ্ক হবে)..."></textarea>
+                <div id="media-library" class="flex-1 overflow-y-auto space-y-3 pr-2">
+                    </div>
+            </aside>
+
+            <main class="flex-1 flex flex-col p-4 bg-[#070707]">
+                <div class="flex-1 glass-panel relative overflow-hidden flex items-center justify-center">
+                    <div class="w-full h-full max-w-4xl relative group">
+                        <video id="main-video" class="w-full h-full object-contain"></video>
+                        
+                        <div id="ai-loader" class="absolute top-6 right-6 flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hidden">
+                            <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                            <span class="text-[10px] font-bold tracking-widest">AI SYNCING...</span>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-8 flex items-center gap-10 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                        <button class="text-xl text-zinc-400"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button onclick="toggleVideo()" class="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center text-2xl hover:scale-110 transition shadow-2xl">
+                            <i id="play-ico" class="fa-solid fa-play"></i>
+                        </button>
+                        <button class="text-xl text-zinc-400"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="timeline-scroll mt-4 rounded-3xl p-6 relative">
+                    <div class="flex items-center justify-between mb-4 sticky left-0 z-30">
+                        <div class="flex items-center gap-4">
+                            <span id="timer" class="text-2xl font-black text-white/90">00:00:00</span>
+                            <span class="px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 text-[9px] font-bold uppercase">Live Preview</span>
+                        </div>
+                    </div>
+
+                    <div class="relative pt-4">
+                        <div id="playhead" class="playhead-line"></div>
+                        <div class="text-[9px] text-zinc-600 font-bold mb-1 uppercase tracking-tighter">Video Track 01</div>
+                        <div id="v-track" class="track-layer"></div>
+                        
+                        <div class="text-[9px] text-zinc-600 font-bold mb-1 mt-4 uppercase tracking-tighter">AI Dubbing Track</div>
+                        <div id="a-track" class="track-layer"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="dub-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-2xl z-[100] flex items-center justify-center p-4">
+        <div class="w-full max-w-lg glass-panel p-10 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl font-black mb-1">AI Voice <span class="text-cyan-400">Master</span></h2>
+            <p class="text-zinc-500 text-[10px] uppercase tracking-[5px] mb-8">Dubbing & Lip-Sync Engine</p>
+
+            <textarea id="dub-input" class="w-full bg-white/5 border border-white/10 p-5 rounded-3xl outline-none focus:border-cyan-500 transition h-36 text-sm mb-6" placeholder="এখানে আপনার ডায়ালগ লিখুন..."></textarea>
             
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <label class="flex flex-col items-center p-4 bg-zinc-950 rounded-2xl border-2 border-transparent has-[:checked]:border-cyan-500 cursor-pointer">
-                    <input type="radio" name="gender" value="male" class="hidden">
-                    <i class="fa-solid fa-user-tie text-blue-400 text-2xl mb-1"></i>
-                    <span class="text-xs font-bold">Male Voice</span>
+                <label class="cursor-pointer">
+                    <input type="radio" name="v-type" value="male" class="hidden peer">
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/5 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 transition flex flex-col items-center">
+                        <i class="fa-solid fa-person text-blue-400 mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase">Male Voice</span>
+                    </div>
                 </label>
-                <label class="flex flex-col items-center p-4 bg-zinc-950 rounded-2xl border-2 border-transparent has-[:checked]:border-cyan-500 cursor-pointer">
-                    <input type="radio" name="gender" value="female" checked class="hidden">
-                    <i class="fa-solid fa-user-astronaut text-pink-400 text-2xl mb-1"></i>
-                    <span class="text-xs font-bold">Female Voice</span>
+                <label class="cursor-pointer">
+                    <input type="radio" name="v-type" value="female" checked class="hidden peer">
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/5 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 transition flex flex-col items-center">
+                        <i class="fa-solid fa-person-dress text-pink-400 mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase">Female Voice</span>
+                    </div>
                 </label>
             </div>
 
             <div class="flex gap-4">
-                <button onclick="closeDubModal()" class="flex-1 py-4 text-zinc-500 font-bold uppercase text-xs">Close</button>
-                <button id="dub-btn" onclick="processDubbing()" class="flex-[2] py-4 bg-cyan-600 hover:bg-cyan-500 text-black font-black rounded-2xl transition shadow-lg shadow-cyan-900/20">Sync Dubbing</button>
+                <button onclick="closeDubModal()" class="flex-1 py-4 text-xs font-bold text-zinc-600">CANCEL</button>
+                <button id="gen-btn" onclick="runAIDubbing()" class="flex-[2] py-4 bg-white text-black rounded-2xl text-xs font-black hover:bg-cyan-400 transition">SYNC AI DUBBING</button>
             </div>
         </div>
     </div>
 
     <script>
-        const video = document.getElementById('main-player');
+        const video = document.getElementById('main-video');
+        const playIco = document.getElementById('play-ico');
         const playhead = document.getElementById('playhead');
-        const playIcon = document.getElementById('play-icon');
 
-        function togglePlay() {
-            if (video.paused) { video.play(); playIcon.className = 'fa-solid fa-pause'; }
-            else { video.pause(); playIcon.className = 'fa-solid fa-play'; }
+        // Start Intro Animation Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const intro = document.getElementById('intro-overlay');
+                const main = document.getElementById('main-content');
+                
+                intro.classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    intro.style.display = 'none';
+                    main.classList.remove('opacity-0');
+                    main.classList.add('animate__animated', 'animate__fadeIn');
+                }, 1000);
+            }, 3000); // 3 সেকেন্ড পর ইনট্রো চলে যাবে
+        });
+
+        function toggleVideo() {
+            if (video.paused) { video.play(); playIco.className = 'fa-solid fa-pause'; }
+            else { video.pause(); playIco.className = 'fa-solid fa-play'; }
         }
 
-        async function uploadFile(input) {
+        async function handleFile(input) {
             const fd = new FormData();
-            fd.append('files', input.files[0]);
+            for(let f of input.files) fd.append('files', f);
+            
             const res = await fetch('/upload', { method: 'POST', body: fd });
             const data = await res.json();
             
-            const url = URL.createObjectURL(input.files[0]);
-            addToTimeline(url, input.files[0].name);
+            const library = document.getElementById('media-library');
+            input.files.forEach(f => {
+                library.innerHTML += `
+                    <div onclick="previewMedia('${URL.createObjectURL(f)}', '${f.name}')" class="glass-panel p-3 cursor-pointer hover:border-cyan-500 transition group">
+                        <div class="h-20 bg-black rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                             <i class="fa-solid fa-clapperboard text-zinc-800 text-2xl group-hover:text-cyan-500"></i>
+                        </div>
+                        <p class="text-[9px] truncate text-zinc-400 font-bold uppercase">${f.name}</p>
+                    </div>`;
+            });
         }
 
-        function addToTimeline(url, name) {
+        function previewMedia(url, name) {
             video.src = url;
-            document.getElementById('video-track').innerHTML = `<div class="clip w-[800px]">${name}</div>`;
+            document.getElementById('v-track').innerHTML = `<div class="clip-element w-[1200px] animate__animated animate__slideInLeft">${name}</div>`;
             video.play();
         }
 
         function openDubModal() { document.getElementById('dub-modal').classList.remove('hidden'); }
         function closeDubModal() { document.getElementById('dub-modal').classList.add('hidden'); }
 
-        async function processDubbing() {
-            const text = document.getElementById('dub-text').value;
-            const gender = document.querySelector('input[name="gender"]:checked').value;
-            const btn = document.getElementById('dub-btn');
-            
-            if(!text) return;
-            btn.innerText = "Processing...";
+        async function runAIDubbing() {
+            const text = document.getElementById('dub-input').value;
+            const gender = document.querySelector('input[name="v-type"]:checked').value;
+            const btn = document.getElementById('gen-btn');
+            const loader = document.getElementById('ai-loader');
 
-            const res = await fetch('/api/generate-dub', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ text, gender })
-            });
-            const data = await res.json();
+            if(!text) return alert("দয়া করে টেক্সট দিন");
 
-            if (data.status === 'success') {
-                const audio = new Audio(data.audio_url);
-                // Sync with Video Position
-                const currentPos = video.currentTime;
-                const track = document.getElementById('audio-track');
-                track.innerHTML += `<div class="clip audio-clip" style="left: ${currentPos * 20}px">DUB (${gender})</div>`;
-                
-                audio.play();
-                alert("AI Dubbing Synced Successfully!");
-            }
-            btn.innerText = "Sync Dubbing";
+            btn.innerText = "GENERATING AI VOICE...";
+            loader.classList.remove('hidden');
+
+            try {
+                const res = await fetch('/api/generate-dub', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ text, gender })
+                });
+                const data = await res.json();
+
+                if(data.status === 'success') {
+                    const audio = new Audio(data.audio_url);
+                    const pos = video.currentTime;
+                    document.getElementById('a-track').innerHTML += `
+                        <div class="clip-element audio-clip w-48 animate__animated animate__fadeIn" style="left:${pos * 40}px">
+                            ${gender.toUpperCase()} SYNC
+                        </div>`;
+                    audio.play();
+                }
+            } catch(e) {}
+
+            btn.innerText = "SYNC AI DUBBING";
+            loader.classList.add('hidden');
             closeDubModal();
         }
 
         video.ontimeupdate = () => {
-            const pos = video.currentTime * 20;
-            playhead.style.left = pos + "px";
-            document.getElementById('time-display').innerText = video.currentTime.toFixed(2) + "s";
+            const t = video.currentTime;
+            const m = Math.floor(t / 60);
+            const s = Math.floor(t % 60);
+            const ms = Math.floor((t % 1) * 100);
+            document.getElementById('timer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}:${ms.toString().padStart(2,'0')}`;
+            playhead.style.left = (t * 40) + "px";
         };
-
-        // Filters
-        function applyFilter(f) { video.style.filter = f; }
     </script>
 </body>
 </html>
