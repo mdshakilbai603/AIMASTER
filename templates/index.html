@@ -3,104 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master | GSAP Orbital Edition</title>
+    <title>AI Master Studio | Premium GSAP</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;900&family=Syncopate:wght@700&display=swap');
         
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; margin: 0; }
 
-        /* --- GSAP RING BOOT ANIMATION --- */
+        /* --- GSAP ORBITAL RING DESIGN (আপনার পছন্দের সেই ডিজাইন) --- */
         #ring-loader {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .orbital-ring {
-            width: 200px; height: 200px; border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: absolute;
+        .ring-container { position: relative; width: 250px; height: 250px; display: flex; align-items: center; justify-content: center; }
+        
+        .orbit {
+            position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .glow-dot {
-            width: 8px; height: 8px; background: #ff0000; border-radius: 50%;
-            position: absolute; top: -4px; left: 50%; box-shadow: 0 0 20px #ff0000;
-        }
-        .shakil-text {
-            font-family: 'Syncopate', sans-serif; font-size: 28px; letter-spacing: 12px;
-            opacity: 0; transform: translateY(20px); text-transform: uppercase;
+        .ring-1 { width: 250px; height: 250px; border-top: 2px solid #00f5ff; }
+        .ring-2 { width: 180px; height: 180px; border-bottom: 2px solid #bd00ff; }
+        
+        .shakil-brand {
+            font-family: 'Syncopate', sans-serif; font-size: 32px; font-weight: 700;
+            letter-spacing: 15px; text-transform: uppercase; opacity: 0;
+            background: linear-gradient(to right, #00f5ff, #bd00ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* --- THE NEW DESIGN (AIRTEL COOL LOOK) --- */
-        .glass-orb { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(50px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; }
+        /* --- STUDIO UI DESIGN --- */
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; }
         .main-app { padding: 15px; height: 100vh; display: flex; flex-direction: column; opacity: 0; }
         
-        /* Premium Timeline */
-        .timeline-box { height: 220px; background: #050505; border-radius: 50px 50px 0 0; position: relative; overflow-x: auto; border-top: 1px solid #111; }
-        .playhead-line { position: absolute; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #ff0000, transparent); z-index: 100; box-shadow: 0 0 15px #ff0000; }
-        .track-strip { height: 45px; background: rgba(255,255,255,0.01); margin: 12px 0; border-radius: 12px; position: relative; min-width: 5000px; }
-        .clip-neon { position: absolute; height: 35px; top: 5px; background: linear-gradient(90deg, #ff0000, #330000); border-radius: 10px; color: #fff; font-size: 9px; font-weight: 900; display: flex; align-items: center; padding: 0 20px; border-left: 3px solid #fff; }
+        /* CapCut Style Timeline */
+        .timeline-container { height: 200px; background: #080808; border-radius: 40px 40px 0 0; position: relative; overflow-x: auto; border-top: 1px solid #151515; }
+        .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #00f5ff; z-index: 100; box-shadow: 0 0 15px #00f5ff; }
+        .track { height: 45px; background: rgba(255,255,255,0.01); margin: 10px 0; border-radius: 12px; position: relative; min-width: 5000px; }
+        .clip { position: absolute; height: 35px; top: 5px; background: linear-gradient(90deg, #00f5ff, #bd00ff); border-radius: 10px; color: #000; font-size: 10px; font-weight: 900; display: flex; align-items: center; padding: 0 15px; }
 
-        .btn-shakil { background: #fff; color: #000; font-weight: 900; padding: 14px 30px; border-radius: 100px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
-        .btn-shakil:hover { background: #ff0000; color: #fff; transform: scale(1.05); }
+        .btn-premium { background: #fff; color: #000; font-weight: 900; padding: 14px 30px; border-radius: 100px; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
     <div id="ring-loader">
-        <div class="orbital-ring" id="ring1"><div class="glow-dot"></div></div>
-        <div class="orbital-ring" id="ring2" style="width: 160px; height: 160px; border-color: #ff000033;"></div>
-        <h1 class="shakil-text" id="s-text">SHAKIL</h1>
+        <div class="ring-container">
+            <div class="orbit ring-1" id="r1"></div>
+            <div class="orbit ring-2" id="r2"></div>
+            <h1 class="shakil-brand" id="b-text">SHAKIL</h1>
+        </div>
     </div>
 
-    <div class="main-app" id="app-ui">
+    <div class="main-app" id="studio-ui">
         <header class="h-24 flex items-center justify-between px-10">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center font-black">S</div>
-                <h2 class="text-[10px] font-light tracking-[10px] text-zinc-500 uppercase">Airtel AI Master</h2>
+                <div class="w-10 h-10 glass-panel flex items-center justify-center font-black text-cyan-400 text-xl">S</div>
+                <h2 class="text-[10px] font-light tracking-[10px] text-zinc-500 uppercase">AI Master Pro</h2>
             </div>
             <div class="flex gap-4">
-                <button onclick="openDub()" class="btn-shakil">AI Voice Sync</button>
-                <button onclick="exportVideo()" class="w-14 h-14 glass-orb flex items-center justify-center text-zinc-400"><i class="fa-solid fa-plus"></i></button>
+                <button onclick="openDub()" class="btn-premium">AI Dubbing</button>
+                <button onclick="exportVideo()" class="w-14 h-14 glass-panel flex items-center justify-center text-zinc-400"><i class="fa-solid fa-download"></i></button>
             </div>
         </header>
 
         <main class="flex-1 flex flex-col md:flex-row gap-4 p-2 overflow-hidden">
-            <div class="flex-[3] glass-orb relative flex items-center justify-center overflow-hidden bg-black/40">
+            <div class="flex-[3] glass-panel relative flex items-center justify-center overflow-hidden bg-black/40">
                 <video id="v-player" class="max-w-full max-h-full rounded-3xl" playsinline></video>
                 <div class="absolute bottom-10 flex gap-12 bg-black/60 backdrop-blur-3xl px-12 py-5 rounded-full border border-white/5">
                     <button onclick="toggle()" class="text-2xl text-white"><i id="p-ico" class="fa-solid fa-play"></i></button>
                 </div>
             </div>
 
-            <aside class="flex-1 glass-orb p-8 flex flex-col gap-6">
+            <aside class="flex-1 glass-panel p-8 flex flex-col gap-6">
                 <div onclick="document.getElementById('f-in').click()" class="border border-white/5 rounded-[40px] p-12 text-center cursor-pointer hover:bg-white/5 transition-all">
-                    <i class="fa-solid fa-cloud-arrow-up text-3xl mb-4 text-zinc-700"></i>
-                    <p class="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Import Media</p>
+                    <i class="fa-solid fa-plus text-3xl mb-4 text-zinc-700"></i>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Add Media</p>
                 </div>
                 <input type="file" id="f-in" class="hidden" onchange="upload(this)">
-                <div id="f-name" class="text-[10px] text-zinc-600 uppercase text-center font-bold tracking-tighter">No Active File</div>
+                <div id="f-name" class="text-[10px] text-zinc-600 uppercase text-center font-bold">Waiting for input...</div>
             </aside>
         </main>
 
-        <div class="timeline-box" id="tl-scroll" onclick="seek(event)">
-            <div id="playhead" class="playhead-line"></div>
+        <div class="timeline-container" id="tl-box" onclick="seek(event)">
+            <div id="playhead" class="playhead"></div>
             <div class="px-24 py-10">
-                <div id="v-track" class="track-strip"></div>
-                <div id="a-track" class="track-strip"></div>
+                <div id="v-track" class="track"></div>
+                <div id="a-track" class="track"></div>
             </div>
-            <div id="clock" class="absolute bottom-6 left-10 text-xs font-mono text-zinc-700">00:00:00</div>
+            <div id="clock" class="absolute bottom-6 left-12 text-xs font-mono text-cyan-400/50">00:00:00</div>
         </div>
     </div>
 
     <div id="dub-modal" class="hidden fixed inset-0 bg-black/98 z-[11000] flex items-center justify-center p-8 backdrop-blur-3xl">
-        <div class="glass-orb w-full max-w-lg p-14 text-center border-white/10">
-            <h3 class="text-xl font-light tracking-[15px] mb-10 uppercase">AI SYNC ENGINE</h3>
-            <textarea id="dub-in" class="w-full bg-transparent border border-white/5 p-8 rounded-[35px] text-sm h-48 mb-10 focus:border-red-600 outline-none text-white shadow-2xl" placeholder="লিখুন..."></textarea>
+        <div class="glass-panel w-full max-w-lg p-14 text-center">
+            <h3 class="text-xl font-light tracking-[12px] mb-10 uppercase">AI Sync Engine</h3>
+            <textarea id="dub-in" class="w-full bg-transparent border border-white/5 p-8 rounded-[35px] text-sm h-48 mb-10 focus:border-cyan-500 outline-none text-white" placeholder="Enter script..."></textarea>
             <div class="flex gap-6">
-                <button onclick="closeDub()" class="flex-1 text-[10px] font-bold text-zinc-600 uppercase">Back</button>
-                <button onclick="runDub()" id="d-btn" class="flex-[2] btn-shakil">Generate & Merge</button>
+                <button onclick="closeDub()" class="text-[10px] font-bold text-zinc-600 uppercase">Close</button>
+                <button onclick="runDub()" id="d-btn" class="flex-1 btn-premium">Merge Audio</button>
             </div>
         </div>
     </div>
@@ -109,17 +112,16 @@
         const v = document.getElementById('v-player');
         const pIco = document.getElementById('p-ico');
         const phead = document.getElementById('playhead');
-        const clock = document.getElementById('clock');
 
-        // GSAP Orbital Startup
+        // --- GSAP Ring Animation (Back to Original Cool Style) ---
         window.onload = () => {
-            gsap.to("#ring1", { duration: 4, rotate: 360, repeat: -1, ease: "none" });
-            gsap.to("#ring2", { duration: 3, rotate: -360, repeat: -1, ease: "none" });
+            gsap.to("#r1", { duration: 3, rotate: 360, repeat: -1, ease: "none" });
+            gsap.to("#r2", { duration: 2.5, rotate: -360, repeat: -1, ease: "none" });
             
             const tl = gsap.timeline();
-            tl.to("#s-text", { duration: 1.5, opacity: 1, y: 0, ease: "power4.out", delay: 0.5 })
-              .to("#ring-loader", { duration: 1.5, scale: 3, opacity: 0, display: "none", ease: "expo.inOut", delay: 1 })
-              .to("#app-ui", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
+            tl.to("#b-text", { duration: 1.5, opacity: 1, letterSpacing: "10px", ease: "power3.out" })
+              .to("#ring-loader", { duration: 1.2, y: "-100%", ease: "expo.inOut", delay: 1 })
+              .to("#studio-ui", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
         };
 
         function toggle() {
@@ -135,18 +137,18 @@
             const data = await res.json();
             v.src = data.files[0].url;
             document.getElementById('f-name').innerText = input.files[0].name;
-            document.getElementById('v-track').innerHTML = `<div class="clip-neon w-[4000px]">${input.files[0].name}</div>`;
+            document.getElementById('v-track').innerHTML = `<div class="clip w-[4000px]">${input.files[0].name}</div>`;
             v.play(); pIco.className = 'fa-solid fa-pause';
         }
 
         v.ontimeupdate = () => {
             const t = v.currentTime;
             phead.style.left = (t * 50 + 96) + "px";
-            clock.innerText = new Date(t * 1000).toISOString().substr(11, 8);
+            document.getElementById('clock').innerText = new Date(t * 1000).toISOString().substr(11, 8);
         };
 
         function seek(e) {
-            const x = e.clientX - document.getElementById('tl-scroll').getBoundingClientRect().left + document.getElementById('tl-scroll').scrollLeft - 96;
+            const x = e.clientX - document.getElementById('tl-box').getBoundingClientRect().left + document.getElementById('tl-box').scrollLeft - 96;
             v.currentTime = x / 50;
         }
 
@@ -155,7 +157,7 @@
 
         async function runDub() {
             const btn = document.getElementById('d-btn');
-            btn.innerText = "Syncing...";
+            btn.innerText = "Processing...";
             const res = await fetch('/api/generate-dub', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -163,14 +165,14 @@
             });
             const data = await res.json();
             new Audio(data.audio_url).play();
-            document.getElementById('a-track').innerHTML += `<div class="clip-neon" style="left:${v.currentTime*50}px; background:#fff; color:#000; border:none">AI SYNC</div>`;
-            btn.innerText = "Generate & Merge";
+            document.getElementById('a-track').innerHTML += `<div class="clip" style="left:${v.currentTime*50}px; background:#fff; color:#000">AI SYNC</div>`;
+            btn.innerText = "Merge Audio";
             closeDub();
         }
 
         function exportVideo() {
             const a = document.createElement('a');
-            a.href = v.src; a.download = "Shakil_AI_Master.mp4"; a.click();
+            a.href = v.src; a.download = "Shakil_AI.mp4"; a.click();
         }
     </script>
 </body>
