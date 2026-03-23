@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master | Ultimate Studio</title>
+    <title>AI Master Studio | Shakil</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -12,122 +12,128 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;700;900&display=swap');
         
-        :root { --c: #00f5ff; --p: #bd00ff; }
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; margin: 0; touch-action: manipulation; }
+        :root { --cyan: #00f5ff; --purple: #bd00ff; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; margin: 0; }
 
-        /* --- GSAP Intro (Premium) --- */
+        /* GSAP Intro Animation */
         #intro-overlay {
             position: fixed; inset: 0; background: #000; z-index: 99999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .ring { position: absolute; border: 2px solid var(--c); border-radius: 50%; opacity: 0; }
-        .shakil-name { font-family: 'Montserrat'; font-size: clamp(2.5rem, 8vw, 5rem); background: linear-gradient(90deg, #fff, var(--c), var(--p), #fff); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; opacity: 0; text-align: center; }
+        .ring { position: absolute; border: 2px solid var(--cyan); border-radius: 50%; opacity: 0; }
+        .shakil-name { font-family: 'Montserrat'; font-size: clamp(2.5rem, 8vw, 5rem); background: linear-gradient(90deg, #fff, var(--cyan), var(--purple), #fff); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; opacity: 0; }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* --- Mobile-Ready UI --- */
-        .glass { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; }
+        /* CapCut Style UI */
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; }
+        .timeline-area { height: 180px; background: #050505; border-top: 1px solid #111; overflow-x: auto; position: relative; }
+        .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #ff0055; z-index: 100; pointer-events: none; }
         
-        .main-btn { background: #fff; color: #000; font-weight: 900; padding: 12px 24px; border-radius: 50px; font-size: 11px; text-transform: uppercase; transition: 0.3s; }
-        .dub-btn-glow { background: linear-gradient(135deg, var(--c), var(--p)); box-shadow: 0 0 20px rgba(0, 245, 255, 0.5); border: none; color: #000; }
+        .track-row { height: 40px; background: rgba(255,255,255,0.02); margin: 6px 0; border-radius: 4px; position: relative; min-width: 5000px; }
+        .clip { position: absolute; height: 30px; top: 5px; background: linear-gradient(90deg, var(--cyan), var(--purple)); color: #000; font-size: 9px; font-weight: 900; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; }
+        .audio-clip { background: #fff !important; }
 
-        /* Timeline Engine */
-        .timeline-box { height: 150px; background: #050505; position: relative; overflow-x: auto; border-top: 1px solid #111; -webkit-overflow-scrolling: touch; }
-        .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #ff0055; z-index: 50; pointer-events: none; }
-        .track { height: 35px; background: rgba(255,255,255,0.02); margin: 10px 0; border-radius: 6px; position: relative; min-width: 3000px; }
-        .clip { position: absolute; height: 25px; top: 5px; background: var(--c); color: #000; font-size: 9px; font-weight: 900; border-radius: 4px; padding: 0 8px; display: flex; align-items: center; white-space: nowrap; }
-
-        /* Video Area */
-        .video-container { background: #000; width: 100%; max-width: 900px; aspect-ratio: 16/9; position: relative; border-radius: 15px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        video { width: 100%; height: 100%; object-fit: contain; }
+        /* Buttons */
+        .btn-premium { background: #fff; color: #000; font-weight: 900; padding: 10px 20px; border-radius: 50px; font-size: 10px; text-transform: uppercase; transition: 0.3s; }
+        .btn-premium:hover { transform: scale(1.05); background: var(--cyan); }
     </style>
 </head>
 <body class="flex flex-col">
 
     <div id="intro-overlay">
         <div class="ring" style="width: 200px; height: 200px;" id="r1"></div>
-        <div class="ring" style="width: 300px; height: 300px; border-color: var(--p);" id="r2"></div>
+        <div class="ring" style="width: 300px; height: 300px; border-color: var(--purple);" id="r2"></div>
         <h1 class="shakil-name" id="sn">SHAKIL</h1>
-        <p id="sw" class="text-[8px] tracking-[10px] text-zinc-500 opacity-0 mt-4 uppercase font-bold">AI Master Studio</p>
+        <p id="sw" class="text-[8px] tracking-[12px] text-zinc-500 opacity-0 mt-4 uppercase">AI Master Studio</p>
     </div>
 
     <div id="app" class="flex-1 flex flex-col opacity-0">
-        <header class="h-14 px-4 flex items-center justify-between border-b border-white/5 bg-black/90">
-            <div class="flex items-center gap-2">
-                <div class="w-7 h-7 bg-white rounded flex items-center justify-center text-black font-black text-[10px]">AI</div>
-                <h1 class="font-black text-xs uppercase tracking-tighter">AI Master</h1>
+        <header class="h-14 px-6 flex items-center justify-between border-b border-white/5 bg-black/80">
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-white rounded-lg flex items-center justify-center text-black font-black text-[10px]">AI</div>
+                <h1 class="font-black text-xs uppercase">Studio Pro</h1>
             </div>
-            <div class="flex gap-2">
-                <button onclick="openDub()" class="main-btn dub-btn-glow">Dubbing</button>
-                <button onclick="exportVideo()" class="main-btn px-4"><i class="fa-solid fa-download"></i></button>
+            <div class="flex gap-3">
+                <button onclick="openDub()" class="btn-premium">Add Dubbing</button>
+                <button onclick="downloadFinal()" class="btn-premium px-4"><i class="fa-solid fa-download"></i></button>
             </div>
         </header>
 
         <main class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 gap-2">
             <aside class="w-full md:w-64 glass p-4 flex flex-col gap-4">
-                <button onclick="document.getElementById('fin').click()" class="w-full py-6 border-2 border-dashed border-zinc-800 rounded-2xl text-[10px] text-zinc-500 hover:border-cyan-500 transition uppercase font-bold">
-                    <i class="fa-solid fa-cloud-arrow-up block text-xl mb-2"></i> Upload Video
-                </button>
-                <input type="file" id="fin" class="hidden" accept="video/*" onchange="handleUpload(this)">
-                <div id="asset-info" class="text-[9px] text-zinc-600 uppercase text-center mt-2">No video selected</div>
+                <div onclick="document.getElementById('fin').click()" class="cursor-pointer py-8 border-2 border-dashed border-zinc-800 rounded-2xl text-center hover:border-cyan-500 transition">
+                    <i class="fa-solid fa-cloud-arrow-up text-zinc-600 text-xl mb-2"></i>
+                    <p class="text-[9px] font-bold text-zinc-500 uppercase">Upload Source</p>
+                </div>
+                <input type="file" id="fin" class="hidden" onchange="handleUpload(this)">
+                
+                <div id="file-list" class="flex-1 overflow-y-auto space-y-2">
+                    </div>
             </aside>
 
-            <section class="flex-1 flex items-center justify-center p-2">
-                <div class="video-container glass">
-                    <video id="v-player" playsinline preload="auto"></video>
-                    
-                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-black/60 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
-                        <button onclick="step(-5)" class="text-zinc-400 text-xs"><i class="fa-solid fa-backward"></i></button>
-                        <button onclick="toggle()" class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center text-sm shadow-xl active:scale-90 transition">
-                            <i id="p-ico" class="fa-solid fa-play"></i>
-                        </button>
-                        <button onclick="step(5)" class="text-zinc-400 text-xs"><i class="fa-solid fa-forward"></i></button>
-                    </div>
+            <section class="flex-1 glass flex flex-col items-center justify-center bg-black/40 relative">
+                <video id="main-v" class="max-w-full max-h-[70vh]" playsinline></video>
+                
+                <div class="absolute bottom-6 flex items-center gap-8 bg-black/80 px-8 py-3 rounded-full border border-white/10">
+                    <button onclick="seek(-5)" class="text-zinc-500"><i class="fa-solid fa-backward"></i></button>
+                    <button onclick="toggle()" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-xl active:scale-90 transition">
+                        <i id="p-ico" class="fa-solid fa-play"></i>
+                    </button>
+                    <button onclick="seek(5)" class="text-zinc-500"><i class="fa-solid fa-forward"></i></button>
                 </div>
             </section>
         </main>
 
-        <div class="timeline-box" id="tl-area" onclick="seekTimeline(event)">
+        <div class="timeline-area" id="tl-scroll" onclick="seekByClick(event)">
             <div id="playhead" class="playhead"></div>
             <div class="px-20 py-4">
-                <div id="track-v" class="track"></div>
-                <div id="track-a" class="track"></div>
+                <div id="v-track" class="track-row"></div>
+                <div id="a-track" class="track-row"></div>
             </div>
-            <div class="absolute bottom-2 left-4 text-[10px] font-mono text-cyan-400" id="clock">00:00:00</div>
+            <div id="timer" class="absolute bottom-2 left-4 text-[10px] font-mono text-cyan-400">00:00:00</div>
         </div>
     </div>
 
-    <div id="dub-modal" class="hidden fixed inset-0 bg-black/98 z-[99999] flex items-center justify-center p-6 backdrop-blur-2xl">
-        <div class="glass w-full max-w-sm p-8 text-center">
-            <h2 class="text-xl font-black mb-1 uppercase text-cyan-400">AI Voice Dubbing</h2>
-            <p class="text-[8px] text-zinc-500 tracking-[4px] uppercase mb-6">Real-Time Lip Sync</p>
-            <textarea id="dub-txt" class="w-full bg-zinc-900 border border-white/10 p-4 rounded-xl outline-none focus:border-cyan-500 text-sm mb-6 h-28 text-white" placeholder="এখানে সংলাপ লিখুন..."></textarea>
+    <div id="dub-modal" class="hidden fixed inset-0 bg-black/95 z-[99999] flex items-center justify-center p-6 backdrop-blur-3xl">
+        <div class="glass w-full max-w-sm p-8">
+            <h2 class="text-xl font-black mb-1 uppercase text-cyan-400">ElevenLabs Sync</h2>
+            <p class="text-[8px] text-zinc-500 tracking-[4px] uppercase mb-6">High Fidelity Voice Dubbing</p>
+            
+            <select id="voice-id" class="w-full bg-zinc-900 border border-white/10 p-3 rounded-xl text-xs text-white mb-4 outline-none focus:border-cyan-500">
+                <option value="v1">Shakil Cloned (Natural)</option>
+                <option value="v2">Dramatic Hero (Bangla)</option>
+                <option value="v3">Sweet Heroine (Emotional)</option>
+            </select>
+
+            <textarea id="dub-txt" class="w-full bg-zinc-900 border border-white/10 p-4 rounded-xl text-sm h-24 mb-6 outline-none focus:border-cyan-500 text-white" placeholder="সংলাপটি এখানে লিখুন..."></textarea>
+            
             <div class="flex gap-3">
-                <button onclick="closeDub()" class="flex-1 text-[10px] font-bold text-zinc-600 uppercase">Cancel</button>
-                <button onclick="runDub()" id="dub-exec" class="flex-[2] main-btn dub-btn-glow">Generate Sync</button>
+                <button onclick="closeDub()" class="flex-1 text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Cancel</button>
+                <button onclick="runDub()" id="dub-btn" class="flex-[2] btn-premium">Generate & Sync</button>
             </div>
         </div>
     </div>
 
     <script>
-        const video = document.getElementById('v-player');
+        const video = document.getElementById('main-v');
         const playIco = document.getElementById('p-ico');
         const playhead = document.getElementById('playhead');
-        const clock = document.getElementById('clock');
-        const SCALE = 40; // Pixels per second
+        const timer = document.getElementById('timer');
+        let dubbingAudio = null;
 
         // Intro GSAP
-        window.addEventListener('load', () => {
+        window.onload = () => {
             const tl = gsap.timeline();
-            tl.to("#r1", { duration: 1.2, opacity: 0.5, scale: 2.2, ease: "power4.out" })
-              .to("#r2", { duration: 1.2, opacity: 0.3, scale: 2.8, ease: "power4.out" }, "-=0.8")
-              .to("#sn", { duration: 1.2, opacity: 1, scale: 1.1, ease: "back.out(1.7)" }, "-=0.8")
-              .to("#sw", { duration: 0.8, opacity: 1, y: -5, ease: "power2.out" }, "-=0.4")
-              .to("#intro-overlay", { duration: 1, y: "-100%", ease: "expo.inOut", delay: 0.8 })
+            tl.to("#r1", { duration: 1, opacity: 0.5, scale: 2, ease: "power4.out" })
+              .to("#r2", { duration: 1, opacity: 0.3, scale: 2.5, ease: "power4.out" }, "-=0.7")
+              .to("#sn", { duration: 1, opacity: 1, scale: 1, ease: "back.out(1.7)" }, "-=0.7")
+              .to("#sw", { duration: 0.8, opacity: 1, ease: "power2.out" }, "-=0.4")
+              .to("#intro-overlay", { duration: 1, y: "-100%", ease: "expo.inOut", delay: 1 })
               .to("#app", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
-        });
+        };
 
         function toggle() {
-            if(!video.src) return alert("প্রথমে একটি ভিডিও আপলোড করুন!");
+            if(!video.src) return;
             if(video.paused) { video.play(); playIco.className = 'fa-solid fa-pause'; }
             else { video.pause(); playIco.className = 'fa-solid fa-play'; }
         }
@@ -135,54 +141,63 @@
         async function handleUpload(input) {
             if(!input.files[0]) return;
             const file = input.files[0];
-            const url = URL.createObjectURL(file);
-            video.src = url;
-            video.load();
+            const fd = new FormData();
+            fd.append('files', file);
             
-            document.getElementById('asset-info').innerText = file.name;
-            document.getElementById('track-v').innerHTML = `<div class="clip w-[2000px]">${file.name}</div>`;
+            const res = await fetch('/upload', { method: 'POST', body: fd });
+            const data = await res.json();
             
-            video.onloadedmetadata = () => {
+            if(data.uploaded) {
+                const url = data.uploaded[0].url;
+                video.src = url;
+                renderFileList(file.name);
+                document.getElementById('v-track').innerHTML = `<div class="clip w-[4000px]">${file.name}</div>`;
                 video.play();
                 playIco.className = 'fa-solid fa-pause';
-            };
+            }
+        }
+
+        function renderFileList(name) {
+            document.getElementById('file-list').innerHTML = `
+                <div class="flex items-center justify-between p-3 glass bg-white/5">
+                    <span class="text-[10px] font-bold truncate w-40">${name}</span>
+                    <button onclick="deleteFile('${name}')" class="text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+        }
+
+        async function deleteFile(name) {
+            await fetch(`/delete/${name}`, { method: 'DELETE' });
+            location.reload();
         }
 
         video.ontimeupdate = () => {
             const t = video.currentTime;
-            playhead.style.left = (t * SCALE + 80) + "px";
+            playhead.style.left = (t * 40 + 80) + "px";
             
-            const m = Math.floor(t / 60).toString().padStart(2,'0');
-            const s = Math.floor(t % 60).toString().padStart(2,'0');
-            const ms = Math.floor((t % 1) * 100).toString().padStart(2,'0');
-            clock.innerText = `${m}:${s}:${ms}`;
+            const m = Math.floor(t / 60).toString().padStart(2, '0');
+            const s = Math.floor(t % 60).toString().padStart(2, '0');
+            const ms = Math.floor((t % 1) * 100).toString().padStart(2, '0');
+            timer.innerText = `${m}:${s}:${ms}`;
         };
 
-        function seekTimeline(e) {
-            const rect = document.getElementById('tl-area').getBoundingClientRect();
-            const clickX = e.clientX - rect.left + document.getElementById('tl-area').scrollLeft - 80;
-            video.currentTime = clickX / SCALE;
+        function seekByClick(e) {
+            const rect = document.getElementById('tl-scroll').getBoundingClientRect();
+            const x = e.clientX - rect.left + document.getElementById('tl-scroll').scrollLeft - 80;
+            video.currentTime = x / 40;
         }
 
-        function step(v) { video.currentTime += v; }
-
-        function exportVideo() {
-            if(!video.src) return alert("ডাউনলোড করার জন্য কোনো ভিডিও নেই!");
-            const a = document.createElement('a');
-            a.href = video.src;
-            a.download = "shakil_ai_studio.mp4";
-            a.click();
-        }
+        function seek(v) { video.currentTime += v; }
 
         function openDub() { document.getElementById('dub-modal').classList.remove('hidden'); }
         function closeDub() { document.getElementById('dub-modal').classList.add('hidden'); }
 
         async function runDub() {
             const text = document.getElementById('dub-txt').value;
-            const btn = document.getElementById('dub-exec');
+            const btn = document.getElementById('dub-btn');
             if(!text) return alert("সংলাপ লিখুন!");
             
-            btn.innerText = "Syncing...";
+            btn.innerText = "Processing...";
             const res = await fetch('/api/generate-dub', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -191,13 +206,28 @@
             const data = await res.json();
             
             if(data.status === 'success') {
-                const audio = new Audio(data.audio_url);
-                audio.play();
-                const pos = video.currentTime * SCALE;
-                document.getElementById('track-a').innerHTML += `<div class="clip" style="left:${pos}px; background:#fff; color:#000">AI SYNCED</div>`;
+                dubbingAudio = new Audio(data.audio_url);
+                dubbingAudio.play();
+                
+                // টাইমলাইনে অডিও ব্লক যোগ করা
+                const pos = video.currentTime * 40;
+                document.getElementById('a-track').innerHTML += `<div class="clip audio-clip" style="left:${pos}px">AI VOICE SYNC</div>`;
+                
+                // লিপ-সিঙ্ক চেক করার জন্য ভিডিওর সাথে অডিও হুক করা
+                video.onplay = () => { if(dubbingAudio) dubbingAudio.play(); };
+                video.onpause = () => { if(dubbingAudio) dubbingAudio.pause(); };
             }
-            btn.innerText = "Generate Sync";
+            btn.innerText = "Generate & Sync";
             closeDub();
+        }
+
+        function downloadFinal() {
+            if(!video.src) return alert("কোনো ভিডিও নেই!");
+            // প্রফেশনাল ডাউনলোড লজিক
+            const a = document.createElement('a');
+            a.href = video.src;
+            a.download = "shakil_studio_complete.mp4";
+            a.click();
         }
     </script>
 </body>
