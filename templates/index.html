@@ -3,162 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Master Pro | Fast & Modern</title>
+    <title>AI Master | Cosmic Editor by Shakil</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;900&display=swap');
         
         :root {
-            --aurora: linear-gradient(135deg, #00f5ff, #bd00ff);
-            --glass: rgba(255, 255, 255, 0.05);
+            --bg-deep: #050505;
+            --accent-1: #00f5ff; /* সায়ান */
+            --accent-2: #ffffff; /* সাদা */
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            background-color: #000;
+            background-color: var(--bg-deep);
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            margin: 0;
             overflow: hidden;
             height: 100vh;
         }
 
-        /* --- ফাস্ট লোডিং এনিমেশন --- */
+        /* --- GSAP INTRO STYLES --- */
         #intro-overlay {
             position: fixed;
             inset: 0;
             background: #000;
-            z-index: 10000;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
-        .shakil-name {
-            font-size: clamp(3rem, 10vw, 6rem);
+        .intro-name {
+            font-size: clamp(3rem, 12vw, 7rem);
             font-weight: 900;
-            text-transform: uppercase;
-            background: var(--aurora);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(0.95); }
-        }
-
-        /* --- মোবাইল অপ্টিমাইজড গ্লাস প্যানেল --- */
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-        }
-
-        /* --- কাস্টম টাইমলাইন --- */
-        .timeline-area {
-            background: #050505;
-            height: 180px;
-            border-top: 1px solid #1a1a1a;
-        }
-
-        .track-line {
-            height: 35px;
-            background: rgba(255,255,255,0.02);
-            margin: 5px 0;
-            border-radius: 5px;
+            letter-spacing: -2px;
+            color: var(--accent-2);
             position: relative;
-            min-width: 2000px;
+            opacity: 0;
         }
 
-        .playhead-line {
+        /* --- NEW COLOR UI --- */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+
+        .neon-btn {
+            background: var(--accent-2);
+            color: #000;
+            font-weight: 900;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .neon-btn:hover {
+            background: var(--accent-1);
+            box-shadow: 0 0 20px var(--accent-1);
+            transform: translateY(-2px);
+        }
+
+        /* --- TIMELINE --- */
+        .timeline-container {
+            background: #080808;
+            height: 200px;
+            border-top: 1px solid var(--border);
+            border-radius: 40px 40px 0 0;
+        }
+
+        .playhead {
             position: absolute;
             top: 0; bottom: 0;
             width: 2px;
-            background: #ff3344;
-            box-shadow: 0 0 10px #ff3344;
-            z-index: 50;
+            background: var(--accent-1);
+            box-shadow: 0 0 10px var(--accent-1);
+            z-index: 10;
         }
 
-        /* মোবাইল স্ক্রিন সেটিংস */
-        @media (max-width: 768px) {
-            .hide-mobile { display: none; }
-            .mobile-scroll { overflow-x: auto; }
+        .track {
+            height: 40px;
+            background: rgba(255,255,255,0.02);
+            margin: 10px 0;
+            border-radius: 10px;
+            position: relative;
+            min-width: 3000px;
         }
     </style>
 </head>
 <body class="flex flex-col">
 
     <div id="intro-overlay">
-        <h1 class="shakil-name">SHAKIL</h1>
-        <p class="text-[10px] tracking-[10px] text-zinc-500 mt-4 uppercase">AI Master Pro</p>
+        <h1 class="intro-name" id="shakil-text">SHAKIL</h1>
+        <div id="intro-bar" class="w-0 h-[2px] bg-cyan-400 mt-4"></div>
     </div>
 
-    <div id="app-content" class="flex-1 flex flex-col opacity-0 transition-all duration-1000">
-        
-        <header class="h-14 flex items-center justify-between px-6 border-b border-white/5">
-            <div class="flex items-center gap-2">
-                <div class="w-6 h-6 bg-cyan-500 rounded-md rotate-45"></div>
-                <h1 class="font-black text-sm uppercase tracking-tighter">AI Master <span class="text-cyan-400">Pro</span></h1>
+    <div id="app" class="flex-1 flex flex-col opacity-0">
+        <header class="h-16 px-8 flex items-center justify-between border-b border-white/5 bg-black/50 backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <h1 class="font-black text-xl tracking-tighter uppercase">AI Master</h1>
             </div>
-            <div class="flex gap-3">
-                <button onclick="openDub()" class="text-[10px] font-bold text-zinc-400 uppercase">Dubbing</button>
-                <button class="bg-white text-black text-[10px] px-4 py-1.5 rounded-full font-black uppercase">Export</button>
+
+            <div class="flex items-center gap-6">
+                <button onclick="openDub()" class="text-[10px] font-bold text-zinc-400 hover:text-white transition uppercase tracking-widest">Dubbing Tools</button>
+                <button class="neon-btn">Export Now</button>
             </div>
         </header>
 
-        <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
-            <aside class="w-full md:w-64 border-r border-white/5 p-4 flex flex-col hide-mobile">
-                <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-4">Library</h3>
-                <div id="media-list" class="flex-1 overflow-y-auto space-y-2">
+        <main class="flex-1 flex overflow-hidden">
+            <aside class="w-20 md:w-72 border-r border-white/5 p-6 flex flex-col gap-6 bg-black/20">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Assets</span>
+                    <button onclick="document.getElementById('f-in').click()" class="text-cyan-400"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <input type="file" id="f-in" class="hidden" multiple onchange="handleUpload(this)">
+                
+                <div id="media-list" class="flex-1 overflow-y-auto space-y-3">
                     </div>
-                <button onclick="document.getElementById('file-in').click()" class="mt-4 w-full py-3 border border-dashed border-zinc-700 rounded-xl text-[10px] text-zinc-500">
-                    + Add Media
-                </button>
-                <input type="file" id="file-in" class="hidden" multiple onchange="handleUpload(this)">
             </aside>
 
-            <section class="flex-1 flex flex-col bg-[#020202]">
-                <div class="flex-1 relative flex items-center justify-center p-4">
-                    <div class="glass-card w-full max-w-4xl aspect-video relative overflow-hidden flex items-center justify-center">
-                        <video id="v-player" class="max-w-full max-h-full"></video>
-                        
-                        <div class="absolute bottom-4 flex items-center gap-6 bg-black/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
-                            <button onclick="toggle()" class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center">
-                                <i id="p-ico" class="fa-solid fa-play"></i>
-                            </button>
-                        </div>
+            <section class="flex-1 flex flex-col p-4">
+                <div class="flex-1 glass-panel relative overflow-hidden flex items-center justify-center bg-black/40">
+                    <video id="v-player" class="max-w-full max-h-full rounded-xl shadow-2xl"></video>
+                    
+                    <div class="absolute bottom-10 flex items-center gap-10 bg-black/60 backdrop-blur-xl px-10 py-5 rounded-full border border-white/10">
+                        <button class="text-zinc-500 hover:text-white"><i class="fa-solid fa-backward-step"></i></button>
+                        <button onclick="toggle()" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-xl">
+                            <i id="p-ico" class="fa-solid fa-play"></i>
+                        </button>
+                        <button class="text-zinc-500 hover:text-white"><i class="fa-solid fa-forward-step"></i></button>
                     </div>
                 </div>
 
-                <div class="timeline-area p-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <span id="timer" class="text-xl font-mono text-cyan-400">00:00</span>
-                        <div class="h-1 w-20 bg-zinc-800 rounded-full"></div>
+                <div class="timeline-container mt-4 p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <span id="timer" class="text-3xl font-black font-mono text-white/90">00:00:00</span>
+                        <div class="flex gap-2">
+                             <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                             <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Live Syncing</span>
+                        </div>
                     </div>
-                    <div class="relative overflow-x-auto mobile-scroll pb-2">
-                        <div id="playhead" class="playhead-line"></div>
-                        <div id="v-track" class="track-line"></div>
-                        <div id="a-track" class="track-line"></div>
+                    
+                    <div class="relative overflow-x-auto h-20" id="timeline-scroll">
+                        <div id="playhead" class="playhead"></div>
+                        <div id="v-track" class="track"></div>
+                        <div id="a-track" class="track"></div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="dub-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-6">
-        <div class="glass-card w-full max-w-sm p-8 text-center">
-            <h2 class="text-xl font-black mb-4 uppercase">AI Voice Dub</h2>
-            <textarea id="dub-text" class="w-full bg-black border border-white/10 p-4 rounded-xl text-sm mb-4 outline-none focus:border-cyan-500" placeholder="সংলাপ লিখুন..."></textarea>
-            <div class="flex gap-2">
-                <button onclick="closeDub()" class="flex-1 py-3 text-xs text-zinc-500 font-bold uppercase">Cancel</button>
-                <button onclick="runDub()" class="flex-[2] bg-cyan-500 text-black py-3 rounded-xl text-xs font-black uppercase">Sync Voice</button>
+    <div id="dub-modal" class="hidden fixed inset-0 bg-black/95 z-[1000] flex items-center justify-center p-6 backdrop-blur-3xl">
+        <div class="w-full max-w-lg glass-panel p-12 border-white/20">
+            <h2 class="text-3xl font-black mb-2 uppercase">AI Voice <span class="text-cyan-400">Sync</span></h2>
+            <p class="text-zinc-500 text-[10px] uppercase tracking-[6px] mb-8">Professional Movie Dubbing</p>
+            <textarea id="dub-txt" class="w-full bg-black/50 border border-white/10 p-6 rounded-3xl outline-none focus:border-white transition h-40 text-sm mb-8" placeholder="সংলাপটি এখানে লিখুন..."></textarea>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <label class="cursor-pointer">
+                    <input type="radio" name="v" value="male" class="hidden peer">
+                    <div class="p-6 rounded-2xl bg-zinc-900 border border-white/5 peer-checked:bg-white peer-checked:text-black text-center transition">
+                        <i class="fa-solid fa-mars text-xl mb-1"></i><span class="text-[10px] font-bold uppercase block">Actor</span>
+                    </div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="v" value="female" checked class="hidden peer">
+                    <div class="p-6 rounded-2xl bg-zinc-900 border border-white/5 peer-checked:bg-white peer-checked:text-black text-center transition">
+                        <i class="fa-solid fa-venus text-xl mb-1"></i><span class="text-[10px] font-bold uppercase block">Actress</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="closeDub()" class="flex-1 py-4 text-xs font-bold text-zinc-600 uppercase">Cancel</button>
+                <button id="dub-btn" onclick="runDub()" class="flex-[2] neon-btn">Generate Voice</button>
             </div>
         </div>
     </div>
@@ -168,12 +200,14 @@
         const playIco = document.getElementById('p-ico');
         const playhead = document.getElementById('playhead');
 
-        // লোডিং শেষ হলে ইন্ট্রো সরিয়ে অ্যাপ দেখানো
+        // --- GSAP COSMIC ANIMATION ---
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('intro-overlay').style.transform = 'translateY(-100%)';
-                document.getElementById('app-content').classList.replace('opacity-0', 'opacity-100');
-            }, 1500);
+            const tl = gsap.timeline();
+            
+            tl.to("#shakil-text", { duration: 1.5, opacity: 1, y: -20, ease: "power4.out" })
+              .to("#intro-bar", { duration: 1, w: "200px", ease: "expo.inOut" }, "-=0.5")
+              .to("#intro-overlay", { duration: 1.2, scale: 1.5, opacity: 0, display: "none", ease: "power4.inOut", delay: 0.5 })
+              .to("#app", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
         });
 
         function toggle() {
@@ -187,11 +221,10 @@
             const res = await fetch('/upload', { method: 'POST', body: fd });
             const data = await res.json();
             
-            // ভিডিও প্লেয়ারে প্রথম ফাইলটি সেট করা
             if(data.uploaded.length > 0) {
                 const url = `/uploads/${data.uploaded[0]}`;
                 video.src = url;
-                document.getElementById('v-track').innerHTML = `<div class="absolute h-full bg-cyan-500/30 border-l-2 border-cyan-400 px-2 text-[8px] flex items-center overflow-hidden">${data.uploaded[0]}</div>`;
+                document.getElementById('v-track').innerHTML = `<div class="absolute h-full bg-white/10 border-l-2 border-white px-4 text-[9px] flex items-center font-bold">${data.uploaded[0]}</div>`;
                 video.play();
                 playIco.className = 'fa-solid fa-pause';
             }
@@ -201,13 +234,14 @@
         function closeDub() { document.getElementById('dub-modal').classList.add('hidden'); }
 
         async function runDub() {
-            const text = document.getElementById('dub-text').value;
+            const text = document.getElementById('dub-txt').value;
+            const gender = document.querySelector('input[name="v"]:checked').value;
             if(!text) return;
-            
+
             const res = await fetch('/api/generate-dub', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ text })
+                body: JSON.stringify({ text, gender })
             });
             const data = await res.json();
             if(data.status === 'success') {
@@ -218,10 +252,8 @@
 
         video.ontimeupdate = () => {
             const t = video.currentTime;
-            const m = Math.floor(t / 60);
-            const s = Math.floor(t % 60);
-            document.getElementById('timer').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-            playhead.style.left = (t * 20) + "px"; // মোবাইল অনুযায়ী স্কেল কমানো হয়েছে
+            document.getElementById('timer').innerText = t.toFixed(2).padStart(5, '0');
+            playhead.style.left = (t * 40) + "px";
         };
     </script>
 </body>
