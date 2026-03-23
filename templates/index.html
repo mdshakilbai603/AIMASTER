@@ -3,185 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Master | Professional Dubbing Studio</title>
+    <title>AI Master | Ultimate Studio</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;600;800&display=swap');
         
-        :root { --cyan: #00f5ff; --purple: #bd00ff; }
-        body { background: #000; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; height: 100vh; }
-
-        /* --- GSAP Intro --- */
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        
+        /* GSAP Cosmic Intro */
         #intro-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
+            position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .cosmic-ring { position: absolute; width: 350px; height: 350px; border-radius: 50%; border: 2px solid var(--cyan); opacity: 0; transform: scale(0); }
-        .shakil-name { font-size: 5rem; font-weight: 900; background: linear-gradient(90deg, #fff, var(--cyan), var(--purple), #fff); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; opacity: 0; }
+        .ring { position: absolute; border: 2px solid #00f5ff; border-radius: 50%; opacity: 0; }
+        .name-glow { font-family: 'Montserrat'; font-size: 6rem; background: linear-gradient(90deg, #fff, #00f5ff, #bd00ff, #fff); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; opacity: 0; }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* --- Professional Studio UI --- */
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; }
-        
-        /* Timeline Professional View */
-        .timeline-scroll-area { height: 180px; background: #050505; border-top: 2px solid #111; position: relative; overflow-x: auto; overflow-y: hidden; cursor: crosshair; }
-        .playhead-line { position: absolute; top: 0; bottom: 0; width: 2px; background: #ff3344; box-shadow: 0 0 15px #ff3344; z-index: 100; pointer-events: none; }
-        
-        .track-container { width: 5000px; padding: 10px 0; }
-        .track-row { height: 45px; background: rgba(255,255,255,0.02); margin-bottom: 5px; position: relative; border-radius: 5px; }
-        .track-label { position: sticky; left: 0; width: 100px; background: #0a0a0a; z-index: 10; font-size: 10px; font-weight: 800; display: flex; align-items: center; padding-left: 10px; border-right: 1px solid #222; }
+        /* UI Elements */
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 24px; }
+        .neon-btn { background: #fff; color: #000; font-weight: 800; padding: 10px 24px; border-radius: 50px; transition: 0.3s; font-size: 11px; text-transform: uppercase; }
+        .neon-btn:hover { background: #00f5ff; box-shadow: 0 0 20px #00f5ff; transform: scale(1.05); }
 
-        .audio-block { position: absolute; height: 35px; top: 5px; background: linear-gradient(90deg, var(--cyan), var(--purple)); color: #000; border-radius: 4px; font-size: 9px; font-weight: 900; display: flex; align-items: center; padding: 0 10px; border-left: 3px solid #fff; }
+        /* Timeline Engine */
+        .timeline-area { height: 180px; background: #050505; position: relative; overflow-x: auto; border-top: 1px solid #111; }
+        .scrubber { position: absolute; top: 0; bottom: 0; width: 2px; background: #ff0055; box-shadow: 0 0 10px #ff0055; z-index: 50; pointer-events: none; }
+        .track-row { height: 40px; background: rgba(255,255,255,0.02); margin: 8px 0; border-radius: 8px; position: relative; min-width: 10000px; }
+        .media-clip { position: absolute; height: 30px; top: 5px; background: linear-gradient(90deg, #00f5ff, #bd00ff); border-radius: 6px; padding: 0 12px; font-size: 10px; font-weight: 900; color: #000; display: flex; align-items: center; }
     </style>
 </head>
 <body class="flex flex-col">
 
     <div id="intro-overlay">
-        <div class="cosmic-ring" id="r1"></div>
-        <div class="cosmic-ring" id="r2" style="border-color: var(--purple);"></div>
-        <h1 class="shakil-name" id="s-name">SHAKIL</h1>
-        <p id="s-web" class="text-[10px] tracking-[10px] text-zinc-500 opacity-0 uppercase">AI MASTER STUDIO</p>
+        <div class="ring" style="width: 300px; height: 300px;" id="r1"></div>
+        <div class="ring" style="width: 400px; height: 400px; border-color: #bd00ff;" id="r2"></div>
+        <h1 class="name-glow" id="n1">SHAKIL</h1>
+        <p id="sub" class="text-[10px] tracking-[15px] text-zinc-600 mt-4 opacity-0 uppercase font-bold">AI Master Studio</p>
     </div>
 
     <div id="app" class="flex-1 flex flex-col opacity-0">
-        <header class="h-14 px-6 flex items-center justify-between border-b border-white/5 bg-black/80 backdrop-blur-md">
+        <header class="h-16 px-8 flex items-center justify-between border-b border-white/5 bg-black/50 backdrop-blur-xl">
             <div class="flex items-center gap-3">
-                <div class="w-7 h-7 bg-white rounded flex items-center justify-center text-black font-black text-xs">AI</div>
-                <h1 class="font-black text-sm uppercase">AI Master</h1>
+                <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-lg flex items-center justify-center font-black text-black">AI</div>
+                <h1 class="font-black text-xl uppercase tracking-tighter">AI Master</h1>
             </div>
             <div class="flex gap-4">
-                <button onclick="openDub()" class="text-[10px] font-bold text-zinc-400 hover:text-cyan-400 uppercase tracking-widest transition">Add Dubbing</button>
-                <button onclick="downloadResult()" class="bg-white text-black text-[10px] px-5 py-1.5 rounded-full font-black uppercase hover:bg-cyan-400 transition">Export</button>
+                <button onclick="openDub()" class="text-xs font-bold text-zinc-500 hover:text-white transition uppercase tracking-widest">Add Dubbing</button>
+                <button onclick="downloadVideo()" class="neon-btn">Download Result</button>
             </div>
         </header>
 
         <main class="flex-1 flex flex-col overflow-hidden">
             <div class="flex-1 flex overflow-hidden">
-                <aside class="w-64 glass-card m-2 p-5 flex flex-col gap-4">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase tracking-[3px]">Media Library</h3>
-                    <div id="asset-list" class="flex-1 overflow-y-auto space-y-2"></div>
-                    <button onclick="document.getElementById('file-upload').click()" class="w-full py-3 border border-dashed border-zinc-700 rounded-xl text-[10px] text-zinc-500 hover:text-white transition">+ Add Files</button>
-                    <input type="file" id="file-upload" class="hidden" multiple onchange="uploadMedia(this)">
+                <aside class="w-72 glass m-2 p-6 flex flex-col gap-6">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Assets</span>
+                        <button onclick="document.getElementById('file').click()" class="text-cyan-400"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div id="media-list" class="flex-1 overflow-y-auto space-y-3"></div>
+                    <input type="file" id="file" class="hidden" onchange="upload(this)">
                 </aside>
 
-                <section class="flex-1 p-2 flex items-center justify-center bg-[#020202]">
-                    <div class="glass-card w-full max-w-4xl aspect-video relative flex items-center justify-center overflow-hidden">
-                        <video id="main-video" class="w-full h-full object-contain"></video>
+                <section class="flex-1 p-4 flex flex-col items-center justify-center">
+                    <div class="glass w-full max-w-5xl aspect-video relative overflow-hidden bg-zinc-950 flex items-center justify-center">
+                        <video id="v-player" class="max-w-full max-h-full"></video>
                         
-                        <div class="absolute bottom-6 flex items-center gap-6 bg-black/60 backdrop-blur-xl px-8 py-3 rounded-full border border-white/10">
-                            <button onclick="rewind()" class="text-zinc-400"><i class="fa-solid fa-backward"></i></button>
-                            <button onclick="togglePlay()" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-lg transform active:scale-90 transition">
-                                <i id="play-icon" class="fa-solid fa-play"></i>
+                        <div class="absolute bottom-6 flex items-center gap-10 bg-black/80 backdrop-blur-md px-10 py-4 rounded-full border border-white/10 group">
+                            <button onclick="seek(-5)" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button onclick="toggle()" class="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center text-xl shadow-2xl transform active:scale-95 transition">
+                                <i id="p-ico" class="fa-solid fa-play"></i>
                             </button>
-                            <button onclick="forward()" class="text-zinc-400"><i class="fa-solid fa-forward"></i></button>
+                            <button onclick="seek(5)" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-rotate-right"></i></button>
                         </div>
                     </div>
                 </section>
             </div>
 
-            <div class="timeline-scroll-area" id="timeline-container">
-                <div id="playhead" class="playhead-line"></div>
-                <div class="track-container">
-                    <div class="track-row flex" id="v-track"><div class="track-label">Video Track</div></div>
-                    <div class="track-row flex" id="a-track"><div class="track-label">Audio Track</div></div>
-                    <div class="track-row flex" id="d-track"><div class="track-label">AI Dubbing</div></div>
+            <div class="timeline-area" id="tl-scroll" onclick="seekByTimeline(event)">
+                <div id="scrubber" class="scrubber"></div>
+                <div class="px-24">
+                    <div id="v-track" class="track-row"></div>
+                    <div id="a-track" class="track-row"></div>
+                    <div id="d-track" class="track-row"></div>
                 </div>
             </div>
-            
-            <footer class="h-10 bg-black flex items-center px-8 justify-between border-t border-white/5">
-                <div id="time-display" class="text-xs font-mono text-cyan-400">00:00:00</div>
-                <div class="text-[9px] text-zinc-600 font-bold uppercase tracking-widest">Shakil's Professional Studio</div>
+
+            <footer class="h-10 bg-black flex items-center px-10 border-t border-white/5">
+                <div id="timer" class="text-cyan-400 font-mono text-sm font-bold">00:00:00</div>
             </footer>
         </main>
     </div>
 
-    <div id="dub-modal" class="hidden fixed inset-0 bg-black/95 z-[11000] flex items-center justify-center backdrop-blur-2xl p-6">
-        <div class="glass-card w-full max-w-md p-10">
-            <h2 class="text-2xl font-black mb-1 uppercase">AI <span class="text-cyan-400">Dub Sync</span></h2>
-            <p class="text-[9px] text-zinc-500 tracking-[5px] uppercase mb-8">Movie Dubbing Engine</p>
-            <textarea id="dub-text" class="w-full bg-black border border-white/10 p-5 rounded-2xl outline-none focus:border-cyan-500 text-sm mb-6 h-36" placeholder="সংলাপ এখানে লিখুন..."></textarea>
+    <div id="dub-modal" class="hidden fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center p-6 backdrop-blur-3xl">
+        <div class="glass w-full max-w-md p-10 border-white/20">
+            <h2 class="text-3xl font-black mb-1 uppercase italic">AI <span class="text-cyan-400">Dubber</span></h2>
+            <p class="text-[9px] text-zinc-500 tracking-[6px] mb-8 uppercase">Lip-Sync Ready Engine</p>
+            <textarea id="dub-txt" class="w-full bg-zinc-900/50 border border-white/10 p-5 rounded-2xl outline-none focus:border-cyan-500 transition text-sm mb-6 h-32" placeholder="আপনার সংলাপ এখানে লিখুন..."></textarea>
             <div class="flex gap-4">
                 <button onclick="closeDub()" class="flex-1 text-xs font-bold text-zinc-600 uppercase">Cancel</button>
-                <button onclick="generateDub()" id="dub-btn" class="flex-[2] bg-white text-black py-4 rounded-full text-[10px] font-black uppercase hover:bg-cyan-400 transition">Sync & Generate</button>
+                <button onclick="runDub()" id="dub-btn" class="flex-[2] neon-btn">Generate & Sync</button>
             </div>
         </div>
     </div>
 
     <script>
-        const video = document.getElementById('main-video');
-        const playIcon = document.getElementById('play-icon');
-        const playhead = document.getElementById('playhead');
-        const timeDisplay = document.getElementById('time-display');
-        const timeline = document.getElementById('timeline-container');
+        const video = document.getElementById('v-player');
+        const playIco = document.getElementById('p-ico');
+        const scrubber = document.getElementById('scrubber');
+        const timer = document.getElementById('timer');
+        const P_SEC = 60; // Pixels per second
 
-        // --- Intro Animation ---
-        window.onload = () => {
+        // Intro Animation
+        window.addEventListener('DOMContentLoaded', () => {
             const tl = gsap.timeline();
             tl.to("#r1", { duration: 1.5, opacity: 0.5, scale: 2, ease: "power4.out" })
               .to("#r2", { duration: 1.5, opacity: 0.3, scale: 2.5, ease: "power4.out" }, "-=1")
-              .to("#s-name", { duration: 1.5, opacity: 1, scale: 1, ease: "back.out(1.7)" }, "-=1")
-              .to("#s-web", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5")
+              .to("#n1", { duration: 1.5, opacity: 1, scale: 1, ease: "back.out(1.7)" }, "-=1")
+              .to("#sub", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5")
               .to("#intro-overlay", { duration: 1, y: "-100%", ease: "expo.inOut", delay: 1 })
               .to("#app", { duration: 1, opacity: 1, ease: "power2.out" }, "-=0.5");
-        };
+        });
 
-        // --- Core Functions ---
-        function togglePlay() {
-            if(video.paused) { video.play(); playIcon.className = 'fa-solid fa-pause'; }
-            else { video.pause(); playIcon.className = 'fa-solid fa-play'; }
+        function toggle() {
+            if(video.paused) { video.play(); playIco.className = 'fa-solid fa-pause'; }
+            else { video.pause(); playIco.className = 'fa-solid fa-play'; }
         }
 
-        async function uploadMedia(input) {
+        async function upload(input) {
             const fd = new FormData();
             for(let f of input.files) fd.append('files', f);
             const res = await fetch('/upload', { method: 'POST', body: fd });
             const data = await res.json();
             
             if(data.uploaded.length > 0) {
-                const url = data.uploaded[0].url;
-                video.src = url;
-                document.getElementById('v-track').innerHTML += `<div class="audio-block w-80" style="left: 0px">${data.uploaded[0].name}</div>`;
-                video.play(); playIcon.className = 'fa-solid fa-pause';
+                video.src = data.uploaded[0].url;
+                document.getElementById('v-track').innerHTML = `<div class="media-clip w-[1200px]">${data.uploaded[0].name}</div>`;
+                video.load();
+                video.play();
+                playIco.className = 'fa-solid fa-pause';
             }
         }
 
-        // টাইমলাইন ও প্লেয়ার সিঙ্ক
+        // Timeline Scrubber Engine
         video.ontimeupdate = () => {
             const t = video.currentTime;
-            const pixelsPerSec = 40;
-            const position = t * pixelsPerSec;
+            const x = t * P_SEC + 96; // 96px is the padding
+            scrubber.style.left = x + "px";
             
-            // প্লে-হেড মুভমেন্ট
-            playhead.style.left = position + "px";
-            
-            // অটো স্ক্রোল টাইমলাইন
-            if(position > timeline.clientWidth / 2) {
-                timeline.scrollLeft = position - (timeline.clientWidth / 2);
-            }
-
-            // টাইম ডিসপ্লে
+            // Format time
             const m = Math.floor(t / 60);
             const s = Math.floor(t % 60);
             const ms = Math.floor((t % 1) * 100);
-            timeDisplay.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+            timer.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}:${ms.toString().padStart(2,'0')}`;
+
+            // Auto-scroll timeline
+            const tlArea = document.getElementById('tl-scroll');
+            if (x > tlArea.clientWidth / 2) {
+                tlArea.scrollLeft = x - (tlArea.clientWidth / 2);
+            }
         };
 
-        // টাইমলাইনে ক্লিক করলে ভিডিওর সেখানে যাওয়া (Professional Seek)
-        timeline.onclick = (e) => {
-            const rect = timeline.getBoundingClientRect();
-            const x = e.clientX - rect.left + timeline.scrollLeft;
-            video.currentTime = x / 40;
-        };
+        function seekByTimeline(e) {
+            const tlArea = document.getElementById('tl-scroll');
+            const rect = tlArea.getBoundingClientRect();
+            const clickX = e.clientX - rect.left + tlArea.scrollLeft - 96;
+            video.currentTime = clickX / P_SEC;
+        }
 
-        function downloadResult() {
-            if(!video.src) return alert("প্রথমে একটি ভিডিও আপলোড করুন");
+        function seek(val) { video.currentTime += val; }
+
+        function downloadVideo() {
+            if(!video.src) return alert("প্রথমে ভিডিও আপলোড করুন");
             const a = document.createElement('a');
             a.href = video.src;
-            a.download = "shakil_ai_master_studio.mp4";
+            a.download = "shakil-studio-export.mp4";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -190,11 +188,11 @@
         function openDub() { document.getElementById('dub-modal').classList.remove('hidden'); }
         function closeDub() { document.getElementById('dub-modal').classList.add('hidden'); }
 
-        async function generateDub() {
-            const text = document.getElementById('dub-text').value;
+        async function runDub() {
+            const text = document.getElementById('dub-txt').value;
             if(!text) return;
             document.getElementById('dub-btn').innerText = "Syncing...";
-            
+
             const res = await fetch('/api/generate-dub', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -202,18 +200,13 @@
             });
             const data = await res.json();
             if(data.status === 'success') {
-                const audio = new Audio(data.audio_url);
-                audio.play();
-                // টাইমলাইনে ব্লক যোগ করা
-                const startPos = video.currentTime * 40;
-                document.getElementById('d-track').innerHTML += `<div class="audio-block" style="left: ${startPos}px; background: #fff; color: #000">AI SYNC: BENGALI</div>`;
+                new Audio(data.audio_url).play();
+                const pos = video.currentTime * P_SEC;
+                document.getElementById('d-track').innerHTML += `<div class="media-clip" style="left:${pos}px; background:#fff; color:#000">AI SYNCED VOICE</div>`;
             }
-            document.getElementById('dub-btn').innerText = "Sync & Generate";
+            document.getElementById('dub-btn').innerText = "Generate & Sync";
             closeDub();
         }
-
-        function rewind() { video.currentTime -= 5; }
-        function forward() { video.currentTime += 5; }
     </script>
 </body>
 </html>
