@@ -10,146 +10,300 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;900&family=Plus+Jakarta+Sans:wght@200;400;700;800&display=swap');
         
-        body { 
-            background-color: #000; color: #fff; font-family: 'Inter', sans-serif; 
-            margin: 0; padding: 0; overflow: hidden; height: 100vh;
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0; padding: 0;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* --- Intro Animation (আপনার পছন্দের সেই স্টাইল) --- */
+        /* --- YOUR ORIGINAL GSAP COSMIC INTRO --- */
         #intro-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        .shakil-brand {
-            font-size: 3rem; font-weight: 900; letter-spacing: 10px; text-transform: uppercase;
-            background: linear-gradient(to right, #fff, #00f5ff, #bd00ff, #fff);
-            background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: aurora 5s infinite linear;
-        }
-        @keyframes aurora { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-        /* --- CAPCUT MOBILE UI STYLE --- */
-        .app-container { display: flex; flex-direction: column; height: 100vh; opacity: 0; }
-        
-        /* Top Header */
-        header { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: #000; border-bottom: 1px solid #1a1a1a; }
-        
-        /* Video Preview Area (CapCut Style) */
-        .preview-window { 
-            flex: 1; background: #000; display: flex; align-items: center; justify-content: center; 
-            position: relative; overflow: hidden;
+        .intro-name {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to right, #fff 10%, #00f5ff, #bd00ff, #fff 90%);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: aurora-glow 6s infinite linear;
         }
+
+        @keyframes aurora-glow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        .ring { position: absolute; width: 300px; height: 300px; border-radius: 50%; border: 1.5px solid #00f5ff; opacity: 0; }
+
+        /* --- REAL CAPCUT MOBILE UI LAYOUT --- */
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            opacity: 0;
+        }
+
+        /* 1. Header (Resolution & Export) */
+        header {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            background: #000;
+            border-bottom: 1px solid #1a1a1a;
+            z-index: 100;
+        }
+        
+        .header-icon { font-size: 18px; color: #aaa; cursor: pointer; }
+        
+        .res-badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ddd;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 50px;
+            letter-spacing: 1.5px;
+        }
+
+        .export-btn {
+            background: #0080ff;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 5px 18px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        /* 2. Video Preview (Mobile Scale) */
+        .preview-window {
+            flex: 1;
+            background: #080808;
+            display: flex;
+            items-center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        
         video { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .play-btn { width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-shadow: 0 0 10px #000; }
 
-        /* Middle Toolbar */
-        .toolbar { height: 60px; display: flex; align-items: center; justify-content: space-around; background: #0f0f0f; font-size: 20px; color: #aaa; }
-
-        /* Timeline Area (The Real CapCut Experience) */
-        .timeline-container { 
-            height: 280px; background: #121212; border-top: 1px solid #222; position: relative;
-            display: flex; flex-direction: column;
-        }
-        
-        .timeline-controls { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 12px; color: #777; border-bottom: 1px solid #1a1a1a; }
-
-        .timeline-scroll { flex: 1; overflow-x: auto; position: relative; padding: 20px 0; scroll-behavior: smooth; }
-        
-        /* Playhead (Fixed Center Like CapCut) */
-        .playhead-center { 
-            position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; 
-            background: #fff; z-index: 100; pointer-events: none;
+        /* 3. Timeline Area (The Real Deal) */
+        .timeline-container {
+            height: 260px;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
-        .track-row { height: 50px; background: rgba(255,255,255,0.03); margin-bottom: 10px; position: relative; min-width: 10000px; }
-        
-        .video-clip { 
-            position: absolute; height: 40px; top: 5px; background: #2a2a2a; border: 1.5px solid #444; 
-            border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: 10px; color: #fff;
+        .time-labels {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            color: #777;
+            font-size: 10px;
+            font-family: monospace;
+            border-bottom: 1px solid #1a1a1a;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav { height: 60px; background: #000; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #1a1a1a; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #888; cursor: pointer; }
-        .nav-item i { font-size: 18px; }
-        .nav-item span { font-size: 10px; }
-        .nav-item.active { color: #fff; }
+        .playhead-center {
+            position: absolute;
+            left: 50%; top: 0; bottom: 0;
+            width: 2px; background: #fff;
+            z-index: 100; pointer-events: none;
+            box-shadow: 0 0 10px #fff;
+        }
 
-        /* Custom Play/Pause Overlay */
-        .play-btn { 
-            width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; position: absolute;
+        .tracks-scroll {
+            flex: 1;
+            overflow-x: auto;
+            position: relative;
+            padding: 15px 0;
+            min-width: 10000px; /* Long time scale */
+        }
+
+        .track-row {
+            height: 48px;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.01);
+            position: relative;
+        }
+
+        .v-clip {
+            position: absolute;
+            height: 40px; top: 4px;
+            background: #2a2a2a; border: 1.5px solid #444;
+            border-radius: 4px; display: flex; align-items: center;
+            padding: 0 10px; font-size: 10px; color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .a-clip { background: #3c1e55; border-color: #5d2b7d; }
+
+        /* 4. Bottom Toolbar (App Icons) */
+        .bottom-toolbar {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: #000;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #888;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .tool-item i { font-size: 19px; }
+        .tool-item span { font-size: 9px; font-weight: bold; }
+        .tool-item:hover { color: #fff; transform: scale(1.05); }
+        .tool-item.active { color: #fff; }
+
+        /* Add Media Overlay (Airtel style glitzy button) */
+        .add-media-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 45px; height: 45px;
+            background: linear-gradient(135deg, #00f5ff, #bd00ff);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(0,245,255,0.3);
+            cursor: pointer;
+            z-index: 110;
+        }
+
+        /* --- AI DUBBING MENU (When clicked) --- */
+        #dubbing-menu {
+            display: none;
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            height: 180px;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            border-top: 2px solid #333;
+            flex-direction: column;
+            padding: 20px;
+        }
+        #dub-btn {
+            background: #fff; color: #000; font-weight: 900; padding: 10px; border-radius: 50px; text-transform: uppercase; font-size: 11px;
         }
     </style>
 </head>
-<body>
+<body class="flex flex-col h-screen">
 
     <div id="intro-overlay">
-        <h1 class="shakil-brand">SHAKIL</h1>
+        <div class="ring" id="ring-1"></div>
+        <div class="ring" id="ring-2" style="border-color: #bd00ff; width: 220px; height: 220px;"></div>
+        <h1 class="intro-name">SHAKIL</h1>
     </div>
 
-    <div class="app-container" id="app">
+    <div id="app">
         <header>
-            <i class="fa-solid fa-chevron-left"></i>
-            <span class="text-xs font-bold tracking-widest">1080P</span>
-            <button class="bg-blue-600 px-4 py-1 rounded text-xs font-bold">Export</button>
+            <i class="fa-solid fa-chevron-left header-icon"></i>
+            <span class="res-badge">1080P</span>
+            <button class="export-btn">EXPORT</button>
         </header>
 
         <div class="preview-window">
-            <video id="player" src="" playsinline></video>
+            <video id="v-player" src="" playsinline></video>
             <div class="play-btn" onclick="togglePlay()"><i id="play-ico" class="fa-solid fa-play"></i></div>
+            
+            <div class="add-media-btn" onclick="document.getElementById('file-in').click()">
+                <i class="fa-solid fa-plus text-xl text-black"></i>
+            </div>
+            <input type="file" id="file-in" class="hidden" multiple onchange="uploadMedia(this)">
         </div>
 
         <div class="timeline-container">
-            <div class="timeline-controls">
+            <div class="time-labels">
                 <span id="currentTime">00:00</span>
-                <div class="flex gap-4">
-                    <i class="fa-solid fa-rotate-left"></i>
-                    <i class="fa-solid fa-rotate-right"></i>
-                </div>
+                <i class="fa-solid fa-sync text-zinc-600"></i>
             </div>
-
-            <div class="timeline-scroll" id="scroll-box">
-                <div class="playhead-center"></div>
-                <div class="track-row" id="video-track">
+            
+            <div class="playhead-center"></div>
+            
+            <div class="tracks-scroll" id="tl-scroll">
+                <div class="track-row" id="v-track">
                     </div>
-                <div class="track-row" id="audio-track"></div>
+                <div class="track-row" id="a-track">
+                    </div>
             </div>
         </div>
 
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="document.getElementById('file-upload').click()">
-                <i class="fa-solid fa-plus-square"></i>
-                <span>Add Media</span>
+        <div class="bottom-toolbar">
+            <div class="tool-item active">
+                <i class="fa-solid fa-scissors"></i>
+                <span>EDIT</span>
             </div>
-            <div class="nav-item" onclick="openDub()">
-                <i class="fa-solid fa-microphone"></i>
-                <span>Audio</span>
-            </div>
-            <div class="nav-item">
+            <div class="tool-item">
                 <i class="fa-solid fa-font"></i>
-                <span>Text</span>
+                <span>TEXT</span>
             </div>
-            <div class="nav-item">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Effects</span>
+            <div class="tool-item" onclick="toggleDubbingMenu()">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <span>DUBBING</span>
+            </div>
+            <div class="tool-item">
+                <i class="fa-solid fa-magic text-cyan-400"></i>
+                <span>EFFECTS</span>
+            </div>
+            <div class="tool-item">
+                <i class="fa-solid fa-adjust"></i>
+                <span>FILTER</span>
             </div>
         </div>
     </div>
 
-    <input type="file" id="file-upload" class="hidden" onchange="uploadMedia(this)">
+    <div id="dubbing-menu">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-black text-cyan-400 uppercase tracking-widest">AI VOICE OVER</h3>
+            <i class="fa-solid fa-times-circle text-zinc-600 text-lg" onclick="toggleDubbingMenu()"></i>
+        </div>
+        <textarea id="dub-text" class="flex-1 bg-white/5 border border-zinc-800 p-4 rounded-xl text-xs mb-3 focus:border-cyan-500 outline-none text-white h-20" placeholder="সংলাপটি এখানে দিন..."></textarea>
+        <button onclick="generateDub()" id="dub-btn">Sync Final Audio</button>
+    </div>
 
     <script>
-        const video = document.getElementById('player');
-        const playIco = document.getElementById('play-ico');
-        const scrollBox = document.getElementById('scroll-box');
+        const video = document.getElementById('v-player');
+        const playIco = document.getElementById('p-ico');
+        const tlScroll = document.getElementById('tl-scroll');
         const timeDisplay = document.getElementById('currentTime');
 
-        // Intro GSAP
+        // GSAP Intro Logic (আপনার পছন্দের সেই অ্যানিমেশন)
         window.onload = () => {
-            gsap.to("#app", { duration: 1, opacity: 1, delay: 2 });
-            gsap.to("#intro-overlay", { duration: 1.2, y: "-100%", delay: 1.5, ease: "power4.inOut" });
+            gsap.to("#app", { duration: 1.2, opacity: 1, delay: 2, ease: "power2.out" });
+            gsap.to("#intro-overlay", { duration: 1.5, y: "-100%", delay: 1.8, ease: "expo.inOut" });
+            gsap.from("#currentTime", { duration: 1, text: "00:00", delay: 3 });
         };
 
         function togglePlay() {
@@ -164,35 +318,52 @@
             const data = await res.json();
             
             video.src = data.files[0].url;
-            document.getElementById('video-track').innerHTML = `
-                <div class="video-clip" style="left: 50%; width: ${video.duration * 50 || 1000}px">
+            
+            // টাইমলাইনে ভিডিও ক্লিপ যোগ করা
+            document.getElementById('v-track').innerHTML = `
+                <div class="v-clip" style="left: 50%; width: 1500px">
                     ${input.files[0].name}
                 </div>`;
+            
             video.play();
             playIco.className='fa-solid fa-pause';
         }
 
-        // Timeline Scroll Sync (CapCut Style)
+        // টাইমলাইন স্ক্রল সিঙ্ক (১০৮০পি বাটন ঠিক জায়গায় রেখেই)
         video.ontimeupdate = () => {
             const t = video.currentTime;
             const minutes = Math.floor(t / 60).toString().padStart(2, '0');
             const seconds = Math.floor(t % 60).toString().padStart(2, '0');
             timeDisplay.innerText = `${minutes}:${seconds}`;
             
-            // Scroll logic: 50px per second
-            scrollBox.scrollLeft = t * 50;
+            // প্লে-হেড ঠিক রাখতে টাইমলাইন স্ক্রল করা
+            tlScroll.scrollLeft = t * 40; // ১ সেকেন্ড = ৪০ পিক্সেল
         };
 
-        // Manual Seek (Scroll on Timeline)
-        scrollBox.onscroll = () => {
-            if(video.paused) {
-                video.currentTime = scrollBox.scrollLeft / 50;
-            }
-        };
+        function toggleDubbingMenu() {
+            const menu = document.getElementById('dubbing-menu');
+            if(menu.style.display === 'flex') menu.style.display = 'none';
+            else menu.style.display = 'flex';
+        }
 
-        function openDub() {
-            alert("ডাবিং অপশন লোড হচ্ছে...");
-            // এখানে আপনার আগের ডাবিং পপআপ কোডটি বসানো যাবে
+        async function generateDub() {
+            const text = document.getElementById('dub-text').value;
+            const btn = document.getElementById('dub-btn');
+            if(!text) return;
+            btn.innerText = "Syncing with video...";
+            const res = await fetch('/api/generate-dub', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ text })
+            });
+            const data = await res.json();
+            new Audio(data.audio_url).play();
+            
+            // ডাবিং ক্লিপ যোগ করা
+            document.getElementById('a-track').innerHTML += `<div class="v-clip a-clip" style="left:${video.currentTime*40 + 400}px">AI SYNC VOICE</div>`;
+            
+            btn.innerText = "Sync Final Audio";
+            toggleDubbingMenu();
         }
     </script>
 </body>
