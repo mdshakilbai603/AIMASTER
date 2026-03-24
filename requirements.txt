@@ -3,4 +3,4 @@ uvicorn
 requests
 moviepy
 python-multipart
-gunicorn
+imageio-ffmpeg
