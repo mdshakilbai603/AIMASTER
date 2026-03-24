@@ -1,5 +1,6 @@
 fastapi
 uvicorn
-python-multipart
+requests
 moviepy
-pydantic
+python-multipart
+gunicorn
