@@ -1,7 +1,6 @@
 fastapi
 uvicorn
-gunicorn
 requests
-moviepy
+moviepy>=2.0.0
 python-multipart
 imageio-ffmpeg
