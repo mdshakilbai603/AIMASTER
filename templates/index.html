@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master Pro | Shakil</title>
+    <title>AI Master Pro | Shakil Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -12,148 +12,101 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@700;900&display=swap');
         
-        :root { --bg: #000; --aurora-1: #00f5ff; --aurora-2: #bd00ff; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; margin: 0; height: 100vh; }
+        body { background: #000; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; margin: 0; height: 100vh; }
 
-        /* --- ১. সেই অরিজিনাল কসমিক ইন্ট্রো --- */
+        /* --- অরিজিনাল কসমিক এনিমেশন --- */
         #intro-overlay {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .shakil-title {
-            font-size: 5rem; font-weight: 900; font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fff 30%, var(--aurora-1), var(--aurora-2), #fff 70%);
+            font-size: 5rem; font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(135deg, #fff 30%, #00f5ff, #bd00ff, #fff 70%);
             background-size: 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: aurora-text 5s infinite linear;
+            animation: aurora 5s infinite linear;
         }
-        @keyframes aurora-text { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .cosmic-ring { position: absolute; width: 300px; height: 300px; border-radius: 50%; border: 2px solid var(--aurora-1); opacity: 0; }
+        @keyframes aurora { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .cosmic-ring { position: absolute; width: 300px; height: 300px; border-radius: 50%; border: 2px solid #00f5ff; opacity: 0; }
 
-        /* --- ২. মেইন এডিটর (CapCut UI) --- */
-        #app-ui { display: none; flex-direction: column; height: 100vh; opacity: 0; }
-        header { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: #000; }
-        .res-btn { background: #111; padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 800; color: #ddd; }
-        .export-btn { background: #007aff; color: white; padding: 6px 16px; border-radius: 4px; font-size: 11px; font-weight: 900; }
+        /* --- CapCut UI --- */
+        #main-ui { display: none; flex-direction: column; height: 100vh; }
+        header { height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; }
+        .res-pill { background: #1a1a1a; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 800; border: 1px solid #333; }
+        .export-btn { background: #007aff; color: #fff; padding: 6px 18px; border-radius: 4px; font-size: 11px; font-weight: 900; }
 
-        .preview-window { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+        .preview { flex: 1; background: #000; display: flex; items-center; justify-content: center; position: relative; }
         video { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* টাইমলাইন */
-        .timeline-box { height: 260px; background: #111; border-top: 1px solid #222; position: relative; }
-        .playhead-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 50; }
-        .tracks { overflow-x: auto; padding-top: 40px; }
-        .track-row { height: 45px; background: rgba(255,255,255,0.02); margin-bottom: 8px; min-width: 5000px; position: relative; }
+        .timeline { height: 280px; background: #0c0c0c; position: relative; border-top: 1px solid #1a1a1a; }
+        .playhead { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 10; }
+        .scroll-tracks { overflow-x: auto; padding-top: 40px; }
+        .track { height: 45px; background: rgba(255,255,255,0.03); margin-bottom: 8px; min-width: 5000px; }
 
-        /* টুলবার স্লাইডার (সব ফিচার এখানে) */
-        .feature-bar {
-            height: 75px; background: #000; display: flex; overflow-x: auto;
-            padding: 0 10px; gap: 20px; border-top: 1px solid #1a1a1a; align-items: center;
-        }
-        .tool-item { display: flex; flex-direction: column; align-items: center; min-width: 55px; color: #888; cursor: pointer; }
-        .tool-item i { font-size: 18px; margin-bottom: 5px; }
-        .tool-item span { font-size: 9px; font-weight: bold; }
-        .tool-item.active { color: #fff; }
-
-        /* ডাবিং পপআপ */
-        #dub-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9000; flex-direction: column; padding: 25px; }
+        .toolbar { height: 75px; background: #000; display: flex; overflow-x: auto; gap: 20px; padding: 0 15px; align-items: center; border-top: 1px solid #1a1a1a; }
+        .tool { display: flex; flex-direction: column; align-items: center; min-width: 55px; color: #777; font-size: 10px; font-weight: bold; }
+        .tool.active { color: #fff; }
+        .tool i { font-size: 18px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
     <div id="intro-overlay">
-        <div class="cosmic-ring" id="ring-1"></div>
+        <div class="cosmic-ring" id="ring"></div>
         <h1 class="shakil-title">SHAKIL</h1>
-        <div class="mt-8 flex items-center gap-3">
-            <span class="text-cyan-400 font-bold tracking-[8px] text-[10px] uppercase">AI MASTER PRO</span>
-        </div>
+        <p class="text-[10px] tracking-[10px] text-cyan-400 font-bold mt-10 uppercase">AI MASTER PRO</p>
     </div>
 
-    <div id="app-ui">
+    <div id="main-ui">
         <header>
             <i class="fa-solid fa-chevron-left text-lg"></i>
-            <div class="res-btn">1080P <i class="fa-solid fa-caret-down ml-1"></i></div>
-            <button class="export-btn" onclick="startExport()">EXPORT</button>
+            <div class="res-pill">1080P <i class="fa-solid fa-caret-down text-[8px] ml-1"></i></div>
+            <button class="export-btn" onclick="location.reload()">EXPORT</button>
         </header>
 
-        <div class="preview-window">
-            <video id="main-v" playsinline></video>
-            <div class="absolute" onclick="playPause()"><i id="p-ico" class="fa-solid fa-play text-4xl opacity-30"></i></div>
+        <div class="preview" onclick="document.getElementById('vid-in').click()">
+            <video id="player" playsinline></video>
+            <input type="file" id="vid-in" class="hidden" onchange="loadMedia(this)">
+            <i id="play-ico" class="fa-solid fa-play text-4xl opacity-20 absolute"></i>
         </div>
 
-        <div class="timeline-box">
-            <div class="playhead-center"></div>
-            <div class="tracks" id="tl-scroll">
-                <div class="track-row" id="v-track"></div>
-                <div class="track-row" id="a-track"></div>
+        <div class="timeline">
+            <div class="playhead"></div>
+            <div class="scroll-tracks" id="scr-tl">
+                <div class="track" id="v-tr"></div>
+                <div class="track"></div>
             </div>
         </div>
 
-        <div class="feature-bar">
-            <div class="tool-item active"><i class="fa-solid fa-scissors"></i><span>Edit</span></div>
-            <div class="tool-item" onclick="openDub()"><i class="fa-solid fa-microphone-lines text-cyan-400"></i><span>Dubbing</span></div>
-            <div class="tool-item"><i class="fa-solid fa-music"></i><span>Audio</span></div>
-            <div class="tool-item"><i class="fa-solid fa-font"></i><span>Text</span></div>
-            <div class="tool-item"><i class="fa-solid fa-layer-group"></i><span>Overlay</span></div>
-            <div class="tool-item"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Effects</span></div>
-            <div class="tool-item"><i class="fa-solid fa-square-poll-vertical"></i><span>Filters</span></div>
-            <div class="tool-item"><i class="fa-solid fa-sliders"></i><span>Adjust</span></div>
-            <div class="tool-item"><i class="fa-solid fa-palette"></i><span>Canvas</span></div>
+        <div class="toolbar">
+            <div class="tool active"><i class="fa-solid fa-scissors"></i><span>Edit</span></div>
+            <div class="tool"><i class="fa-solid fa-microphone-lines text-cyan-400"></i><span>Dubbing</span></div>
+            <div class="tool"><i class="fa-solid fa-music"></i><span>Audio</span></div>
+            <div class="tool"><i class="fa-solid fa-font"></i><span>Text</span></div>
+            <div class="tool"><i class="fa-solid fa-layer-group"></i><span>Overlay</span></div>
+            <div class="tool"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Effects</span></div>
+            <div class="tool"><i class="fa-solid fa-sliders"></i><span>Adjust</span></div>
         </div>
-    </div>
-
-    <div id="dub-modal">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-black text-cyan-400 uppercase tracking-widest">AI Dubbing</h2>
-            <i class="fa-solid fa-circle-xmark text-2xl text-zinc-600" onclick="closeDub()"></i>
-        </div>
-        <textarea id="dub-in" class="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl outline-none h-40 text-sm mb-6" placeholder="সংলাপটি এখানে লিখুন..."></textarea>
-        <button id="dub-btn" onclick="generateVoice()" class="w-full bg-white text-black py-4 rounded-full font-black uppercase text-xs tracking-widest">Sync Final Audio</button>
     </div>
 
     <script>
-        const video = document.getElementById('main-v');
-        const pIco = document.getElementById('p-ico');
-
-        // অরিজিনাল GSAP এনিমেশন লজিক
+        const video = document.getElementById('player');
+        
         window.onload = () => {
             const tl = gsap.timeline();
-            tl.to("#ring-1", { duration: 1.5, opacity: 0.5, scale: 2.5, ease: "power4.out" })
-              .to("#intro-overlay", { duration: 1.2, y: "-100%", ease: "expo.inOut", delay: 0.8 })
-              .to("#app-ui", { duration: 1, opacity: 1, display: "flex", ease: "power2.out" });
+            tl.to("#ring", { duration: 1.5, opacity: 0.5, scale: 2.5, ease: "power4.out" })
+              .to("#intro-overlay", { duration: 1.2, y: "-100%", ease: "expo.inOut", delay: 1 })
+              .set("#main-ui", { display: "flex" });
         };
 
-        function playPause() {
-            if(!video.src) return alert("প্রথমে মিডিয়া আপলোড করুন!");
-            video.paused ? (video.play(), pIco.className='fa-solid fa-pause') : (video.pause(), pIco.className='fa-solid fa-play');
+        function loadMedia(input) {
+            if(!input.files[0]) return;
+            video.src = URL.createObjectURL(input.files[0]);
+            document.getElementById('v-tr').innerHTML = `<div class="h-full bg-zinc-800 border-x border-white/20 ml-[50%] w-[1000px] flex items-center px-4 text-[9px] font-bold">${input.files[0].name}</div>`;
         }
 
-        // টাইমলাইন অটো স্ক্রল
         video.ontimeupdate = () => {
-            document.getElementById('tl-scroll').scrollLeft = video.currentTime * 50;
+            document.getElementById('scr-tl').scrollLeft = video.currentTime * 50;
         };
-
-        function openDub() { document.getElementById('dub-modal').style.display = 'flex'; }
-        function closeDub() { document.getElementById('dub-modal').style.display = 'none'; }
-
-        function startExport() {
-            let btn = document.querySelector('.export-btn');
-            let progress = 0;
-            let interval = setInterval(() => {
-                progress += 2;
-                btn.innerText = progress + "%";
-                if(progress >= 100) { clearInterval(interval); btn.innerText = "DONE"; }
-            }, 50);
-        }
-
-        async function generateVoice() {
-            const btn = document.getElementById('dub-btn');
-            btn.innerText = "Generating AI Voice...";
-            setTimeout(() => {
-                alert("আপনার AI ভয়েস তৈরি হয়ে অডিও ট্র্যাকে যুক্ত হয়েছে!");
-                btn.innerText = "Sync Final Audio";
-                closeDub();
-            }, 2000);
-        }
     </script>
 </body>
 </html>
