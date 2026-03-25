@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master Pro | Shakil Engine</title>
+    <title>AI Master Pro | Full Engine</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -13,119 +13,121 @@
         
         html, body { margin: 0; padding: 0; height: 100dvh; background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; user-select: none; }
         
-        /* ইন্ট্রো এনিমেশন */
-        #intro { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s; }
-        .shakil-text { font-family: 'Montserrat', sans-serif; font-size: 3rem; font-weight: 900; background: linear-gradient(90deg, #fff, #00f5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0,245,255,0.5); }
+        /* --- ইন্ট্রো --- */
+        #intro { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
+        .shakil-text { font-family: 'Montserrat', sans-serif; font-size: 4rem; font-weight: 900; background: linear-gradient(90deg, #fff, #00f5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(0,245,255,0.5); }
         
-        /* মেইন এডিটর লেআউট */
+        /* --- মেইন লেআউট --- */
         .editor-container { display: grid; grid-template-rows: auto 1fr auto; height: 100dvh; }
-        .preview-area { background: #0a0a0a; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        video { max-width: 100%; max-height: 100%; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .preview-area { background: #0a0a0a; display: flex; align-items: center; justify-content: center; position: relative; }
+        video { max-width: 100%; max-height: 100%; box-shadow: 0 0 50px rgba(0,0,0,0.8); border-radius: 10px; }
         
-        /* টাইমলাইন ও বাটন */
-        .controls { background: #111; padding: 20px; border-top: 1px solid #222; }
-        .action-btn { background: #222; padding: 12px 20px; border-radius: 12px; transition: 0.3s; cursor: pointer; border: 1px solid #333; }
-        .action-btn:hover { background: #00f5ff; color: #000; transform: scale(1.05); }
-        
-        /* লোডিং স্পিনার */
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #00f5ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; }
+        /* --- টুলস প্যানেল --- */
+        .controls { background: #111; padding: 15px; border-top: 1px solid #222; }
+        .tool-btn { background: #1a1a1a; padding: 12px; border-radius: 15px; border: 1px solid #333; transition: 0.3s; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 80px; }
+        .tool-btn:hover { background: #00f5ff; color: #000; transform: translateY(-3px); }
+        .tool-btn i { font-size: 1.2rem; }
+        .tool-btn span { font-size: 10px; font-weight: bold; }
+
+        /* --- লোডার এনিমেশন --- */
+        .processing-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 50; }
+        .loader-circle { width: 50px; height: 50px; border: 4px solid #1a1a1a; border-top: 4px solid #00f5ff; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* মডাল স্টাইল */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
     <div id="intro">
         <div class="shakil-text">SHAKIL</div>
-        <div class="text-cyan-400 font-bold tracking-widest mt-2">AI MASTER PRO</div>
+        <div class="text-cyan-400 font-bold tracking-[5px] text-xs">AI MASTER PRO</div>
     </div>
 
     <div class="editor-container">
-        <div class="p-4 flex justify-between items-center bg-[#0a0a0a] border-b border-[#222]">
+        <div class="p-4 flex justify-between items-center bg-black border-b border-[#222]">
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
-                <span class="font-bold tracking-tight">AI MASTER <span class="text-cyan-400">PRO</span></span>
+                <i class="fa-solid fa-bolt text-yellow-400"></i>
+                <span class="font-bold text-sm tracking-tighter text-gray-300">SHAKIL ENGINE V3.0</span>
             </div>
-            <button onclick="exportVideo()" class="bg-cyan-500 hover:bg-cyan-400 text-black px-5 py-1.5 rounded-full font-bold text-sm transition">EXPORT</button>
+            <button onclick="openExport()" class="bg-white text-black px-6 py-1.5 rounded-full font-black text-xs hover:bg-cyan-400 transition">SAVE VIDEO</button>
         </div>
 
         <div class="preview-area">
-            <video id="main-video" controls class="hidden"></video>
-            <div id="upload-placeholder" class="text-center">
-                <i class="fa-solid fa-cloud-arrow-up text-5xl text-gray-700 mb-4"></i>
-                <p class="text-gray-500">ভিডিও ড্র্যাগ করুন বা বাটনে ক্লিক করুন</p>
+            <video id="main-video" controls style="display:none;"></video>
+            <div id="add-text" onclick="document.getElementById('video-input').click()" class="flex flex-col items-center gap-3 cursor-pointer">
+                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center border border-dashed border-white/20">
+                    <i class="fa-solid fa-plus text-2xl"></i>
+                </div>
+                <p class="text-gray-500 font-bold text-xs uppercase tracking-widest">নতুন প্রোজেক্ট শুরু করুন</p>
             </div>
-            <div id="main-loader" class="absolute flex flex-col items-center gap-3 hidden">
-                <div class="loader" style="display: block; width: 50px; height: 50px;"></div>
-                <p class="text-cyan-400 font-bold">Processing AI Engine...</p>
+            <input type="file" id="video-input" class="hidden" accept="video/*" onchange="loadVideo(this)">
+            
+            <div id="processing-ui" class="processing-overlay">
+                <div class="loader-circle"></div>
+                <p class="text-cyan-400 font-bold text-xs mt-4 tracking-widest">AI IS EDITING...</p>
             </div>
         </div>
 
         <div class="controls">
-            <div class="flex gap-4 overflow-x-auto pb-2">
-                <input type="file" id="fileInput" class="hidden" accept="video/*" onchange="handleUpload(event)">
-                <div onclick="document.getElementById('fileInput').click()" class="action-btn flex flex-col items-center gap-2 min-w-[100px]">
-                    <i class="fa-solid fa-plus text-xl"></i>
-                    <span class="text-xs">Add Video</span>
+            <div class="flex gap-3 overflow-x-auto pb-2">
+                <div class="tool-btn" onclick="document.getElementById('video-input').click()">
+                    <i class="fa-solid fa-film"></i><span>মিডিয়া</span>
                 </div>
-                
-                <div onclick="openDubbing()" class="action-btn flex flex-col items-center gap-2 min-w-[100px]">
-                    <i class="fa-solid fa-microphone-lines text-xl"></i>
-                    <span class="text-xs">AI Dubbing</span>
+                <div class="tool-btn" id="dub-btn" onclick="openDubbing()">
+                    <i class="fa-solid fa-microphone-lines text-cyan-400"></i><span>ডাবিং</span>
                 </div>
-
-                <div class="action-btn flex flex-col items-center gap-2 min-w-[100px]">
-                    <i class="fa-solid fa-closed-captioning text-xl"></i>
-                    <span class="text-xs">Subtitles</span>
+                <div class="tool-btn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>ইফেক্ট</span>
+                </div>
+                <div class="tool-btn">
+                    <i class="fa-solid fa-closed-captioning"></i><span>সাবটাইটেল</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="dub-modal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-6">
-        <div class="bg-[#111] w-full max-w-md rounded-3xl p-8 border border-cyan-900/30">
-            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                <i class="fa-solid fa-robot text-cyan-400"></i> AI Dubbing Setup
-            </h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-gray-400 text-sm mb-2">Target Language</label>
-                    <select id="dub-lang" class="w-full bg-[#1a1a1a] border border-[#333] p-3 rounded-xl focus:outline-none focus:border-cyan-500">
-                        <option value="bn">Bengali</option>
-                        <option value="en">English</option>
-                        <option value="hi">Hindi</option>
-                    </select>
-                </div>
-                <button onclick="startProcessing()" id="process-btn" class="w-full bg-cyan-500 text-black font-bold py-4 rounded-xl mt-4">GENERATE AI VOICE</button>
-                <button onclick="closeDubbing()" class="w-full text-gray-500 text-sm">Cancel</button>
-            </div>
+    <div id="dub-modal" class="modal">
+        <div class="bg-[#111] p-8 rounded-3xl w-80 border border-cyan-900/30 text-center">
+            <i class="fa-solid fa-robot text-4xl text-cyan-400 mb-4"></i>
+            <h3 class="font-bold mb-4">AI ডাবিং সেটআপ</h3>
+            <select id="lang" class="w-full bg-[#1a1a1a] p-3 rounded-xl border border-gray-800 text-sm mb-4">
+                <option value="bn">বাংলা (Bengali)</option>
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+            </select>
+            <button onclick="processDubbing()" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-xl">GENERATE</button>
+            <p onclick="closeDubbing()" class="mt-4 text-xs text-gray-500 cursor-pointer">ফিরে যান</p>
         </div>
     </div>
 
     <script>
-        // ১. ইন্ট্রো রিমুভ
+        // ইন্ট্রো হ্যান্ডলার
         setTimeout(() => {
-            document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => document.getElementById('intro').remove(), 1000);
-        }, 2500);
+            const intro = document.getElementById('intro');
+            intro.style.opacity = '0';
+            setTimeout(() => intro.remove(), 500);
+        }, 2000);
 
         const video = document.getElementById('main-video');
-        const placeholder = document.getElementById('upload-placeholder');
-        const loader = document.getElementById('main-loader');
+        const loader = document.getElementById('processing-ui');
+        const placeholder = document.getElementById('add-text');
 
-        // ২. রিয়েল ভিডিও আপলোড হ্যান্ডলার
-        async function handleUpload(event) {
-            const file = event.target.files[0];
-            if(!file) return;
+        // --- ভিডিও আপলোড এবং সার্ভার কল (Real API Connection) ---
+        async function loadVideo(input) {
+            const file = input.files[0];
+            if (!file) return;
 
-            // UI আপডেট
-            placeholder.classList.add('hidden');
-            loader.classList.remove('hidden');
+            // UI পরিবর্তন
+            loader.style.display = 'flex';
+            placeholder.style.display = 'none';
 
             const formData = new FormData();
             formData.append("file", file);
 
             try {
-                // আপনার app.py এপিআই-তে ফাইল পাঠানো
+                // আপনার app.py সার্ভারের এপিআই-তে রিকোয়েস্ট
                 const response = await fetch('/api/process', {
                     method: 'POST',
                     body: formData
@@ -134,20 +136,23 @@
 
                 if(data.status === 'success') {
                     video.src = data.url;
-                    video.classList.remove('hidden');
+                    video.style.display = 'block';
+                    video.play();
                 } else {
                     alert("ভুল হয়েছে: " + data.error);
+                    placeholder.style.display = 'flex';
                 }
             } catch (err) {
-                alert("সার্ভার কানেক্ট হচ্ছে না!");
+                alert("সার্ভার কানেক্ট করা যায়নি! app.py চেক করুন।");
+                placeholder.style.display = 'flex';
             } finally {
-                loader.classList.add('hidden');
+                loader.style.display = 'none';
             }
         }
 
-        // ৩. ডাবিং ফাংশন
+        // ডাবিং ফাংশনালিটি
         function openDubbing() {
-            if(!video.src) return alert("প্রথমে একটি ভিডিও আপলোড করুন!");
+            if(!video.src) return alert("আগে ভিডিও যোগ করুন!");
             document.getElementById('dub-modal').style.display = 'flex';
         }
 
@@ -155,22 +160,20 @@
             document.getElementById('dub-modal').style.display = 'none';
         }
 
-        async function startProcessing() {
-            const btn = document.getElementById('process-btn');
-            btn.disabled = true;
-            btn.innerText = "Processing Voice Engine...";
+        async function processDubbing() {
+            const btn = document.getElementById('dub-btn');
+            closeDubbing();
+            loader.style.display = 'flex';
             
-            // এখানে আপনার ডাবিং এপিআই কল হবে
+            // ভবিষ্যতে এখানে ডাবিং এপিআই কল হবে
             setTimeout(() => {
-                alert("AI ডাবিং সফল হয়েছে! (সার্ভার মডেল থেকে অডিও লোড হচ্ছে)");
-                btn.disabled = false;
-                btn.innerText = "GENERATE AI VOICE";
-                closeDubbing();
-            }, 3000);
+                loader.style.display = 'none';
+                alert("AI ভয়েস প্রসেসিং শুরু হয়েছে! সার্ভার চেক করুন।");
+            }, 2500);
         }
 
-        function exportVideo() {
-            if(!video.src) return alert("এক্সপোর্ট করার জন্য কোনো ভিডিও নেই!");
+        function openExport() {
+            if(!video.src) return alert("সেভ করার জন্য কোনো ভিডিও নেই!");
             window.open(video.src, '_blank');
         }
     </script>
