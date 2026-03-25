@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master Pro | Full Engine</title>
+    <title>AI Master Pro | Shakil Engine</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -13,270 +13,165 @@
         
         html, body { margin: 0; padding: 0; height: 100dvh; background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; user-select: none; }
         
-        /* --- ইন্ট্রো --- */
-        #intro { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
-        .shakil-text { font-family: 'Montserrat', sans-serif; font-size: 4rem; font-weight: 900; background: linear-gradient(90deg, #fff, #00f5ff, #bd00ff, #fff); background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 3s infinite; }
-        @keyframes gradient { 0% { background-position: 0%; } 50% { background-position: 100%; } 100% { background-position: 0%; } }
+        /* ইন্ট্রো এনিমেশন */
+        #intro { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s; }
+        .shakil-text { font-family: 'Montserrat', sans-serif; font-size: 3rem; font-weight: 900; background: linear-gradient(90deg, #fff, #00f5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0,245,255,0.5); }
         
-        /* --- মেইন লেআউট --- */
-        #app { display: none; flex-direction: column; height: 100%; width: 100%; }
+        /* মেইন এডিটর লেআউট */
+        .editor-container { display: grid; grid-template-rows: auto 1fr auto; height: 100dvh; }
+        .preview-area { background: #0a0a0a; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        video { max-width: 100%; max-height: 100%; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
         
-        .top-bar { height: 55px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #000; border-bottom: 1px solid #111; }
-        .res-btn { background: #1a1a1a; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #333; }
-        .export-btn { background: #007aff; color: white; padding: 6px 16px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        /* টাইমলাইন ও বাটন */
+        .controls { background: #111; padding: 20px; border-top: 1px solid #222; }
+        .action-btn { background: #222; padding: 12px 20px; border-radius: 12px; transition: 0.3s; cursor: pointer; border: 1px solid #333; }
+        .action-btn:hover { background: #00f5ff; color: #000; transform: scale(1.05); }
         
-        .workspace { flex: 1; position: relative; background: #050505; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        video { max-width: 100%; max-height: 100%; object-fit: contain; }
-        
-        /* --- টাইমলাইন --- */
-        .timeline-area { height: 260px; background: #111; display: flex; flex-direction: column; border-top: 1px solid #222; }
-        .timeline-header { height: 35px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #0a0a0a; }
-        .tracks-container { flex: 1; position: relative; overflow-x: auto; overflow-y: hidden; padding-top: 20px; scroll-behavior: smooth; }
-        .playhead { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 50; box-shadow: 0 0 8px rgba(255,255,255,0.8); pointer-events: none; }
-        
-        /* ভিডিও ক্লিপ ডিজাইন */
-        .clip-track { position: absolute; height: 45px; background: #222; border: 2px solid #555; border-radius: 6px; display: flex; align-items: center; overflow: hidden; top: 10px; transition: border-color 0.2s; }
-        .clip-track.active { border-color: #fff; }
-        .clip-frames { display: flex; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, #333 0px, #333 30px, #2a2a2a 30px, #2a2a2a 60px); opacity: 0.5; }
-        
-        /* --- ডায়নামিক বটম টুলবার --- */
-        .toolbar-wrapper { height: 80px; background: #000; border-top: 1px solid #1a1a1a; position: relative; }
-        .toolbar { display: flex; align-items: center; height: 100%; padding: 0 15px; overflow-x: auto; gap: 20px; scrollbar-width: none; }
-        .toolbar::-webkit-scrollbar { display: none; }
-        
-        .tool-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 10px; font-weight: bold; min-width: 50px; cursor: pointer; transition: 0.2s; }
-        .tool-btn i { font-size: 20px; margin-bottom: 6px; }
-        .tool-btn.active, .tool-btn:active { color: #fff; transform: scale(0.95); }
-
-        /* সাব-মেনু অ্যানিমেশন */
-        .sub-menu { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: #000; align-items: center; padding: 0 10px; overflow-x: auto; gap: 20px; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* --- পপআপ মডাল (Export & Dubbing) --- */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 8000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: #1a1a1a; width: 100%; max-width: 350px; padding: 25px; border-radius: 16px; border: 1px solid #333; }
+        /* লোডিং স্পিনার */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #00f5ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="intro">
-        <h1 class="shakil-text">SHAKIL</h1>
-        <p class="text-cyan-400 text-xs font-bold tracking-[8px] mt-4 uppercase">AI Master Pro</p>
+        <div class="shakil-text">SHAKIL</div>
+        <div class="text-cyan-400 font-bold tracking-widest mt-2">AI MASTER PRO</div>
     </div>
 
-    <div id="app">
-        <div class="top-bar">
-            <i class="fa-solid fa-xmark text-xl text-gray-400" onclick="location.reload()"></i>
-            <div class="res-btn">1080P <i class="fa-solid fa-caret-down text-[10px] ml-1"></i></div>
-            <div class="export-btn" onclick="openExport()">Export</div>
+    <div class="editor-container">
+        <div class="p-4 flex justify-between items-center bg-[#0a0a0a] border-b border-[#222]">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i>
+                <span class="font-bold tracking-tight">AI MASTER <span class="text-cyan-400">PRO</span></span>
+            </div>
+            <button onclick="exportVideo()" class="bg-cyan-500 hover:bg-cyan-400 text-black px-5 py-1.5 rounded-full font-bold text-sm transition">EXPORT</button>
         </div>
 
-        <div class="workspace" onclick="document.getElementById('file-upload').click()">
-            <input type="file" id="file-upload" class="hidden" accept="video/*" onchange="loadVideo(this)">
-            <video id="main-video" playsinline></video>
-            <i id="play-btn" class="fa-solid fa-play text-5xl absolute text-white opacity-50 shadow-lg" style="display:none;"></i>
-            <div id="add-text" class="text-white text-sm font-bold bg-white/10 px-6 py-3 rounded-full backdrop-blur-md absolute border border-white/20">
-                <i class="fa-solid fa-plus mr-2"></i>New Project
+        <div class="preview-area">
+            <video id="main-video" controls class="hidden"></video>
+            <div id="upload-placeholder" class="text-center">
+                <i class="fa-solid fa-cloud-arrow-up text-5xl text-gray-700 mb-4"></i>
+                <p class="text-gray-500">ভিডিও ড্র্যাগ করুন বা বাটনে ক্লিক করুন</p>
+            </div>
+            <div id="main-loader" class="absolute flex flex-col items-center gap-3 hidden">
+                <div class="loader" style="display: block; width: 50px; height: 50px;"></div>
+                <p class="text-cyan-400 font-bold">Processing AI Engine...</p>
             </div>
         </div>
 
-        <div class="timeline-area">
-            <div class="timeline-header">
-                <span class="text-xs font-bold text-gray-400" id="time-display">00:00</span>
-                <div class="flex gap-4">
-                    <i class="fa-solid fa-rotate-left text-gray-500"></i>
-                    <i class="fa-solid fa-rotate-right text-gray-500"></i>
+        <div class="controls">
+            <div class="flex gap-4 overflow-x-auto pb-2">
+                <input type="file" id="fileInput" class="hidden" accept="video/*" onchange="handleUpload(event)">
+                <div onclick="document.getElementById('fileInput').click()" class="action-btn flex flex-col items-center gap-2 min-w-[100px]">
+                    <i class="fa-solid fa-plus text-xl"></i>
+                    <span class="text-xs">Add Video</span>
+                </div>
+                
+                <div onclick="openDubbing()" class="action-btn flex flex-col items-center gap-2 min-w-[100px]">
+                    <i class="fa-solid fa-microphone-lines text-xl"></i>
+                    <span class="text-xs">AI Dubbing</span>
+                </div>
+
+                <div class="action-btn flex flex-col items-center gap-2 min-w-[100px]">
+                    <i class="fa-solid fa-closed-captioning text-xl"></i>
+                    <span class="text-xs">Subtitles</span>
                 </div>
             </div>
-            <div class="tracks-container" id="track-scroll" onscroll="syncVideoTime()">
-                <div class="playhead"></div>
-                <div id="v-clip" class="clip-track" style="display: none; left: 50%; width: 1000px;" onclick="this.classList.toggle('active')">
-                    <div class="clip-frames"></div>
+        </div>
+    </div>
+
+    <div id="dub-modal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-6">
+        <div class="bg-[#111] w-full max-w-md rounded-3xl p-8 border border-cyan-900/30">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fa-solid fa-robot text-cyan-400"></i> AI Dubbing Setup
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-400 text-sm mb-2">Target Language</label>
+                    <select id="dub-lang" class="w-full bg-[#1a1a1a] border border-[#333] p-3 rounded-xl focus:outline-none focus:border-cyan-500">
+                        <option value="bn">Bengali</option>
+                        <option value="en">English</option>
+                        <option value="hi">Hindi</option>
+                    </select>
                 </div>
+                <button onclick="startProcessing()" id="process-btn" class="w-full bg-cyan-500 text-black font-bold py-4 rounded-xl mt-4">GENERATE AI VOICE</button>
+                <button onclick="closeDubbing()" class="w-full text-gray-500 text-sm">Cancel</button>
             </div>
-        </div>
-
-        <div class="toolbar-wrapper">
-            
-            <div class="toolbar" id="main-tools">
-                <div class="tool-btn" onclick="showSubMenu('edit-tools')"><i class="fa-solid fa-scissors"></i>Edit</div>
-                <div class="tool-btn" onclick="showSubMenu('audio-tools')"><i class="fa-solid fa-music"></i>Audio</div>
-                <div class="tool-btn" onclick="showSubMenu('text-tools')"><i class="fa-solid fa-font"></i>Text</div>
-                <div class="tool-btn" onclick="openDubbing()"><i class="fa-solid fa-microphone-lines text-cyan-400"></i>Dubbing</div>
-                <div class="tool-btn"><i class="fa-solid fa-layer-group"></i>Overlay</div>
-                <div class="tool-btn"><i class="fa-solid fa-wand-magic-sparkles"></i>Effects</div>
-                <div class="tool-btn"><i class="fa-solid fa-square-poll-vertical"></i>Ratio</div>
-                <div class="tool-btn"><i class="fa-solid fa-filter"></i>Filters</div>
-            </div>
-
-            <div class="sub-menu" id="edit-tools">
-                <div class="tool-btn active" onclick="showMainMenu()"><i class="fa-solid fa-chevron-left"></i>Back</div>
-                <div class="tool-btn" onclick="splitVideo()"><i class="fa-solid fa-arrows-split-up-and-left"></i>Split</div>
-                <div class="tool-btn"><i class="fa-solid fa-gauge-high"></i>Speed</div>
-                <div class="tool-btn"><i class="fa-solid fa-film"></i>Animation</div>
-                <div class="tool-btn"><i class="fa-solid fa-trash-can text-red-500"></i>Delete</div>
-            </div>
-
-            <div class="sub-menu" id="audio-tools">
-                <div class="tool-btn active" onclick="showMainMenu()"><i class="fa-solid fa-chevron-left"></i>Back</div>
-                <div class="tool-btn"><i class="fa-solid fa-compact-disc"></i>Sounds</div>
-                <div class="tool-btn"><i class="fa-solid fa-bolt"></i>Effects</div>
-                <div class="tool-btn"><i class="fa-solid fa-file-audio"></i>Extracted</div>
-                <div class="tool-btn"><i class="fa-solid fa-microphone"></i>Record</div>
-            </div>
-
-            <div class="sub-menu" id="text-tools">
-                <div class="tool-btn active" onclick="showMainMenu()"><i class="fa-solid fa-chevron-left"></i>Back</div>
-                <div class="tool-btn"><i class="fa-solid fa-a"></i>Add Text</div>
-                <div class="tool-btn"><i class="fa-solid fa-closed-captioning"></i>Auto Captions</div>
-                <div class="tool-btn"><i class="fa-solid fa-icons"></i>Templates</div>
-            </div>
-
-        </div>
-    </div>
-
-    <div id="dub-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-black text-cyan-400 uppercase">AI Dubbing Engine</h2>
-                <i class="fa-solid fa-xmark text-xl text-gray-400" onclick="closeDubbing()"></i>
-            </div>
-            <textarea class="w-full bg-[#111] border border-[#333] p-4 rounded-xl outline-none text-sm h-32 mb-4 text-white" placeholder="আপনার ডায়লগ এখানে লিখুন..."></textarea>
-            <button onclick="processDubbing()" id="dub-btn" class="w-full bg-white text-black py-3 rounded-full font-bold uppercase text-xs">Generate Voice</button>
-        </div>
-    </div>
-
-    <div id="export-modal" class="modal-overlay">
-        <div class="modal-box text-center">
-            <h2 class="text-xl font-bold mb-2">Exporting Video</h2>
-            <p class="text-xs text-gray-500 mb-6">Please do not lock your screen or close the app.</p>
-            <div class="w-full bg-zinc-800 rounded-full h-2 mb-4">
-                <div id="export-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-            </div>
-            <p id="export-percent" class="font-bold text-2xl text-blue-400">0%</p>
         </div>
     </div>
 
     <script>
-        // ইন্ট্রো হাইড করা
+        // ১. ইন্ট্রো রিমুভ
         setTimeout(() => {
             document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('intro').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-            }, 500);
-        }, 2000);
+            setTimeout(() => document.getElementById('intro').remove(), 1000);
+        }, 2500);
 
         const video = document.getElementById('main-video');
-        const playBtn = document.getElementById('play-btn');
-        const trackScroll = document.getElementById('track-scroll');
-        const vClip = document.getElementById('v-clip');
+        const placeholder = document.getElementById('upload-placeholder');
+        const loader = document.getElementById('main-loader');
 
-        // ভিডিও আপলোড ও প্লে লজিক
-        function loadVideo(input) {
-            if(input.files && input.files[0]) {
-                video.src = URL.createObjectURL(input.files[0]);
-                document.getElementById('add-text').style.display = 'none';
-                playBtn.style.display = 'block';
-                vClip.style.display = 'block';
-                
-                // ভিডিওর সাইজ অনুযায়ী টাইমলাইনের ক্লিপ বড় করা
-                video.onloadedmetadata = () => {
-                    vClip.style.width = (video.duration * 40) + "px"; // 1s = 40px
-                };
-            }
-        }
+        // ২. রিয়েল ভিডিও আপলোড হ্যান্ডলার
+        async function handleUpload(event) {
+            const file = event.target.files[0];
+            if(!file) return;
 
-        // স্ক্রিনে ক্লিক করে প্লে/পজ
-        function togglePlay(e) {
-            if(!video.src) return;
-            e.stopPropagation();
-            if(video.paused) { 
-                video.play(); 
-                playBtn.classList.replace('fa-play', 'fa-pause');
-                setTimeout(() => playBtn.style.opacity = '0', 300);
-            } else { 
-                video.pause(); 
-                playBtn.classList.replace('fa-pause', 'fa-play');
-                playBtn.style.opacity = '0.5';
-            }
-        }
-        playBtn.onclick = togglePlay;
-        video.onclick = togglePlay;
+            // UI আপডেট
+            placeholder.classList.add('hidden');
+            loader.classList.remove('hidden');
 
-        // ভিডিও চললে টাইমলাইন স্ক্রল হবে
-        video.ontimeupdate = () => {
-            if(!video.paused) {
-                trackScroll.scrollLeft = video.currentTime * 40;
-                updateTimeDisplay(video.currentTime);
-            }
-        };
+            const formData = new FormData();
+            formData.append("file", file);
 
-        // টাইমলাইন স্ক্রল করলে ভিডিওর ফ্রেম চেঞ্জ হবে (স্ক্রাবিং)
-        function syncVideoTime() {
-            if(video.paused && video.src) {
-                video.currentTime = trackScroll.scrollLeft / 40;
-                updateTimeDisplay(video.currentTime);
-            }
-        }
+            try {
+                // আপনার app.py এপিআই-তে ফাইল পাঠানো
+                const response = await fetch('/api/process', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
 
-        function updateTimeDisplay(time) {
-            const m = Math.floor(time / 60).toString().padStart(2, '0');
-            const s = Math.floor(time % 60).toString().padStart(2, '0');
-            document.getElementById('time-display').innerText = `${m}:${s}`;
-        }
-
-        // --- সাব-মেনু কন্ট্রোল ---
-        function showSubMenu(menuId) {
-            document.getElementById('main-tools').style.display = 'none';
-            document.getElementById(menuId).style.display = 'flex';
-        }
-        function showMainMenu() {
-            document.querySelectorAll('.sub-menu').forEach(el => el.style.display = 'none');
-            document.getElementById('main-tools').style.display = 'flex';
-        }
-
-        // --- স্প্লিট (Split) লজিক (সিমুলেশন) ---
-        function splitVideo() {
-            if(!video.src) return alert("প্রথমে ভিডিও আপলোড করুন!");
-            alert("ভিডিও এই পজিশনে (" + video.currentTime.toFixed(1) + "s) স্প্লিট করা হয়েছে। (আসল কাটিং ব্যাকএন্ডে হবে)");
-        }
-
-        // --- ডাবিং পপআপ ---
-        function openDubbing() { document.getElementById('dub-modal').style.display = 'flex'; }
-        function closeDubbing() { document.getElementById('dub-modal').style.display = 'none'; }
-        
-        function processDubbing() {
-            const btn = document.getElementById('dub-btn');
-            btn.innerText = "Generating AI Voice...";
-            setTimeout(() => {
-                alert("আপনার AI ভয়েস রেডি! (এটি এখন আপনার main.py API থেকে অডিও নিয়ে আসবে)");
-                btn.innerText = "Generate Voice";
-                closeDubbing();
-            }, 2000);
-        }
-
-        // --- এক্সপোর্ট এনিমেশন ---
-        function openExport() {
-            if(!video.src) return alert("প্রথমে প্রোজেক্টে ভিডিও যোগ করুন!");
-            document.getElementById('export-modal').style.display = 'flex';
-            let progress = 0;
-            let bar = document.getElementById('export-bar');
-            let text = document.getElementById('export-percent');
-            
-            let interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 5) + 1;
-                if(progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        alert("ভিডিও সফলভাবে সেভ হয়েছে!");
-                        document.getElementById('export-modal').style.display = 'none';
-                    }, 500);
+                if(data.status === 'success') {
+                    video.src = data.url;
+                    video.classList.remove('hidden');
+                } else {
+                    alert("ভুল হয়েছে: " + data.error);
                 }
-                bar.style.width = progress + "%";
-                text.innerText = progress + "%";
-            }, 150);
+            } catch (err) {
+                alert("সার্ভার কানেক্ট হচ্ছে না!");
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        // ৩. ডাবিং ফাংশন
+        function openDubbing() {
+            if(!video.src) return alert("প্রথমে একটি ভিডিও আপলোড করুন!");
+            document.getElementById('dub-modal').style.display = 'flex';
+        }
+
+        function closeDubbing() {
+            document.getElementById('dub-modal').style.display = 'none';
+        }
+
+        async function startProcessing() {
+            const btn = document.getElementById('process-btn');
+            btn.disabled = true;
+            btn.innerText = "Processing Voice Engine...";
+            
+            // এখানে আপনার ডাবিং এপিআই কল হবে
+            setTimeout(() => {
+                alert("AI ডাবিং সফল হয়েছে! (সার্ভার মডেল থেকে অডিও লোড হচ্ছে)");
+                btn.disabled = false;
+                btn.innerText = "GENERATE AI VOICE";
+                closeDubbing();
+            }, 3000);
+        }
+
+        function exportVideo() {
+            if(!video.src) return alert("এক্সপোর্ট করার জন্য কোনো ভিডিও নেই!");
+            window.open(video.src, '_blank');
         }
     </script>
 </body>
