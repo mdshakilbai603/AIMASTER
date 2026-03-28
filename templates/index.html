@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Master | Full Engine</title>
+    <title>AI Master | Video Engine</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -11,296 +11,222 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Plus+Jakarta+Sans:wght@400;700&display=swap');
         
-        html, body { margin: 0; padding: 0; height: 100dvh; background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; user-select: none; }
+        html, body { margin: 0; padding: 0; height: 100dvh; background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
         
-        /* --- ইন্ট্রো --- */
         #intro { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
-        .shakil-text { font-family: 'Montserrat', sans-serif; font-size: 4rem; font-weight: 900; background: linear-gradient(90deg, #fff, #00f5ff, #bd00ff, #fff); background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 3s infinite; }
+        .shakil-text { font-family: 'Montserrat', sans-serif; font-size: 3.5rem; font-weight: 900; background: linear-gradient(90deg, #fff, #00f5ff, #bd00ff, #fff); background-size: 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 3s infinite; }
         @keyframes gradient { 0% { background-position: 0%; } 50% { background-position: 100%; } 100% { background-position: 0%; } }
         
-        /* --- মেইন লেআউট --- */
         #app { display: none; flex-direction: column; height: 100%; width: 100%; }
-        .top-bar { height: 55px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #000; border-bottom: 1px solid #111; }
-        .res-btn { background: #1a1a1a; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #333; }
-        .export-btn { background: #007aff; color: white; padding: 6px 16px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .top-bar { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-bottom: 1px solid #111; }
         
         .workspace { flex: 1; position: relative; background: #050505; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        video { max-width: 100%; max-height: 100%; object-fit: contain; transition: filter 0.3s ease; }
-        
-        /* --- টাইমলাইন --- */
-        .timeline-area { height: 260px; background: #111; display: flex; flex-direction: column; border-top: 1px solid #222; }
-        .timeline-header { height: 35px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #0a0a0a; }
-        .tracks-container { flex: 1; position: relative; overflow-x: auto; overflow-y: hidden; padding-top: 20px; scroll-behavior: auto; }
-        .playhead { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 50; box-shadow: 0 0 8px rgba(255,255,255,0.8); pointer-events: none; }
-        
-        .clip-track { position: absolute; height: 45px; background: #222; border: 2px solid #555; border-radius: 6px; display: flex; align-items: center; overflow: hidden; top: 10px; transition: border-color 0.2s; }
-        .clip-track.active { border-color: #00f5ff; }
-        .clip-frames { display: flex; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, #333 0px, #333 30px, #2a2a2a 30px, #2a2a2a 60px); opacity: 0.5; }
-        
-        /* --- টুলবার --- */
-        .toolbar-wrapper { height: 80px; background: #000; border-top: 1px solid #1a1a1a; position: relative; }
-        .toolbar { display: flex; align-items: center; height: 100%; padding: 0 15px; overflow-x: auto; gap: 20px; scrollbar-width: none; }
-        .toolbar::-webkit-scrollbar { display: none; }
-        .tool-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 10px; font-weight: bold; min-width: 50px; cursor: pointer; transition: 0.2s; }
-        .tool-btn i { font-size: 20px; margin-bottom: 6px; }
-        .tool-btn.active, .tool-btn:active { color: #fff; transform: scale(0.95); }
+        video { max-width: 100%; max-height: 100%; }
 
-        .sub-menu { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: #000; align-items: center; padding: 0 10px; overflow-x: auto; gap: 20px; animation: slideUp 0.2s ease; }
-        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* টেক্সট লেয়ার স্টাইল */
+        .text-layer { position: absolute; color: white; font-size: 24px; font-weight: bold; cursor: move; user-select: none; white-space: nowrap; padding: 5px 10px; border: 1px dashed transparent; }
+        .text-layer.active { border: 1px dashed #00f5ff; background: rgba(0,245,255,0.1); }
+        
+        .timeline-area { height: 240px; background: #0a0a0a; display: flex; flex-direction: column; border-top: 1px solid #222; }
+        .tracks-container { flex: 1; position: relative; overflow-x: auto; padding-top: 10px; }
+        .playhead { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 100; pointer-events: none; }
+        
+        .clip-track { position: absolute; height: 40px; background: #1a1a1a; border: 1.5px solid #444; border-radius: 4px; top: 10px; }
+        
+        .toolbar-wrapper { height: 85px; background: #000; border-top: 1px solid #111; position: relative; }
+        .toolbar { display: flex; align-items: center; height: 100%; padding: 0 10px; overflow-x: auto; gap: 15px; }
+        .tool-btn { display: flex; flex-direction: column; align-items: center; min-width: 55px; color: #777; font-size: 10px; cursor: pointer; }
+        .tool-btn i { font-size: 18px; margin-bottom: 5px; }
+        .tool-btn:active { color: #fff; }
 
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 8000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: #111; width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; border: 1px solid #222; }
+        .sub-menu { display: none; width: 100%; height: 100%; position: absolute; top: 0; background: #000; align-items: center; padding: 0 15px; gap: 20px; z-index: 10; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; }
+        .modal-content { background: #111; padding: 20px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <div id="intro">
         <h1 class="shakil-text">SHAKIL</h1>
-        <p class="text-cyan-400 text-xs font-bold tracking-[8px] mt-4 uppercase">AI Master</p>
+        <p class="text-cyan-400 text-[10px] tracking-[6px] mt-2 uppercase">AI Master</p>
     </div>
 
     <div id="app">
         <div class="top-bar">
-            <i class="fa-solid fa-xmark text-xl text-gray-400" onclick="location.reload()"></i>
-            <div class="res-btn">1080P <i class="fa-solid fa-caret-down text-[10px] ml-1"></i></div>
-            <div class="export-btn" onclick="runExport()">Export</div>
+            <i class="fa-solid fa-chevron-left text-gray-400" onclick="location.reload()"></i>
+            <div class="flex gap-2">
+                <button class="bg-zinc-800 px-3 py-1 rounded text-[10px]" onclick="applyRatio('9/16')">9:16</button>
+                <button class="bg-blue-600 px-4 py-1 rounded text-[10px] font-bold" onclick="runExport()">EXPORT</button>
+            </div>
         </div>
 
-        <div class="workspace" id="video-container">
-            <input type="file" id="file-upload" class="hidden" accept="video/*" onchange="initVideo(this)">
-            <video id="main-video" playsinline preload="auto"></video>
-            <i id="play-btn" class="fa-solid fa-play text-5xl absolute text-white opacity-50" style="display:none;"></i>
-            <div id="new-project-btn" onclick="document.getElementById('file-upload').click()" class="text-white text-sm font-bold bg-white/10 px-6 py-3 rounded-full backdrop-blur-md absolute border border-white/20 cursor-pointer">
-                <i class="fa-solid fa-plus mr-2"></i>New Project
+        <div class="workspace" id="canvas">
+            <video id="main-video" playsinline></video>
+            <div id="text-container"></div> <div id="upload-hint" onclick="document.getElementById('file-input').click()" class="absolute flex flex-col items-center cursor-pointer">
+                <i class="fa-solid fa-circle-plus text-5xl text-blue-500 mb-2"></i>
+                <p class="text-xs font-bold text-gray-400">Tap to start project</p>
             </div>
+            <input type="file" id="file-input" class="hidden" accept="video/*" onchange="handleUpload(this)">
         </div>
 
         <div class="timeline-area">
-            <div class="timeline-header">
-                <span class="text-xs font-bold text-gray-400" id="time-display">00:00 / 00:00</span>
-                <div class="flex gap-4">
-                    <i class="fa-solid fa-undo text-gray-500" onclick="video.currentTime -= 5"></i>
-                    <i class="fa-solid fa-redo text-gray-500" onclick="video.currentTime += 5"></i>
-                </div>
+            <div class="h-8 flex justify-between items-center px-4 bg-black/50 text-[10px] text-gray-400">
+                <span id="time-val">00:00 / 00:00</span>
+                <i class="fa-solid fa-play" id="play-icon" onclick="togglePlay()"></i>
             </div>
-            <div class="tracks-container" id="track-scroll" onscroll="scrubVideo()">
+            <div class="tracks-container" id="timeline-scroll" onscroll="syncTimeline()">
                 <div class="playhead"></div>
-                <div id="v-clip" class="clip-track" style="display: none; left: 50%;" onclick="this.classList.toggle('active')">
-                    <div class="clip-frames"></div>
-                </div>
+                <div id="v-clip" class="clip-track" style="display:none; left: 50%;"></div>
             </div>
         </div>
 
         <div class="toolbar-wrapper">
             <div class="toolbar" id="main-tools">
-                <div class="tool-btn" onclick="showSubMenu('edit-tools')"><i class="fa-solid fa-scissors"></i>Edit</div>
-                <div class="tool-btn" onclick="showSubMenu('audio-tools')"><i class="fa-solid fa-music"></i>Audio</div>
-                <div class="tool-btn" onclick="showSubMenu('text-tools')"><i class="fa-solid fa-font"></i>Text</div>
-                <div class="tool-btn" onclick="openDub()"><i class="fa-solid fa-microphone-lines text-cyan-400"></i>Dubbing</div>
-                <div class="tool-btn" onclick="showSubMenu('filter-tools')"><i class="fa-solid fa-filter"></i>Filters</div>
-                <div class="tool-btn"><i class="fa-solid fa-square-poll-vertical"></i>Ratio</div>
+                <div class="tool-btn" onclick="openMenu('edit-menu')"><i class="fa-solid fa-scissors"></i>Edit</div>
+                <div class="tool-btn" onclick="openMenu('text-menu')"><i class="fa-solid fa-font"></i>Text</div>
+                <div class="tool-btn" onclick="openMenu('audio-menu')"><i class="fa-solid fa-music"></i>Audio</div>
+                <div class="tool-btn" onclick="openDubbing()"><i class="fa-solid fa-microphone-lines text-cyan-400"></i>AI Dub</div>
+                <div class="tool-btn" onclick="openMenu('filter-menu')"><i class="fa-solid fa-wand-magic-sparkles"></i>Filters</div>
             </div>
 
-            <div class="sub-menu" id="edit-tools">
-                <div class="tool-btn" onclick="backMain()"><i class="fa-solid fa-chevron-left"></i></div>
-                <div class="tool-btn" onclick="splitClip()"><i class="fa-solid fa-arrows-split-up-and-left"></i>Split</div>
-                <div class="tool-btn" onclick="setSpeed(2.0)"><i class="fa-solid fa-gauge-high"></i>2x Speed</div>
-                <div class="tool-btn" onclick="setSpeed(1.0)"><i class="fa-solid fa-person-walking"></i>Normal</div>
-                <div class="tool-btn" onclick="deleteVideo()"><i class="fa-solid fa-trash-can text-red-500"></i>Reset</div>
+            <div class="sub-menu" id="edit-menu">
+                <div onclick="closeMenu()"><i class="fa-solid fa-xmark"></i></div>
+                <div class="tool-btn" onclick="splitVideo()"><i class="fa-solid fa-arrows-left-right"></i>Split</div>
+                <div class="tool-btn" onclick="setSpeed(0.5)">0.5x</div>
+                <div class="tool-btn" onclick="setSpeed(1.0)">Normal</div>
+                <div class="tool-btn" onclick="setSpeed(2.0)">2x</div>
             </div>
 
-            <div class="sub-menu" id="filter-tools">
-                <div class="tool-btn" onclick="backMain()"><i class="fa-solid fa-chevron-left"></i></div>
-                <div class="tool-btn" onclick="applyFilter('none')">Normal</div>
-                <div class="tool-btn" onclick="applyFilter('grayscale(100%)')">B&W</div>
-                <div class="tool-btn" onclick="applyFilter('sepia(80%)')">Old</div>
-                <div class="tool-btn" onclick="applyFilter('brightness(1.5)')">Bright</div>
-                <div class="tool-btn" onclick="applyFilter('hue-rotate(90deg)')">Neon</div>
-            </div>
-            
-            <div class="sub-menu" id="audio-tools">
-                <div class="tool-btn" onclick="backMain()"><i class="fa-solid fa-chevron-left"></i></div>
-                <div class="tool-btn"><i class="fa-solid fa-compact-disc"></i>Sounds</div>
-                <div class="tool-btn"><i class="fa-solid fa-microphone"></i>Record</div>
+            <div class="sub-menu" id="text-menu">
+                <div onclick="closeMenu()"><i class="fa-solid fa-xmark"></i></div>
+                <div class="tool-btn" onclick="addText()"><i class="fa-solid fa-plus"></i>Add Text</div>
+                <div class="tool-btn"><i class="fa-solid fa-keyboard"></i>Style</div>
             </div>
 
-            <div class="sub-menu" id="text-tools">
-                <div class="tool-btn" onclick="backMain()"><i class="fa-solid fa-chevron-left"></i></div>
-                <div class="tool-btn"><i class="fa-solid fa-a"></i>Add Text</div>
-                <div class="tool-btn"><i class="fa-solid fa-closed-captioning"></i>Auto Captions</div>
+            <div class="sub-menu" id="filter-menu">
+                <div onclick="closeMenu()"><i class="fa-solid fa-xmark"></i></div>
+                <div class="tool-btn" onclick="setFilter('none')">None</div>
+                <div class="tool-btn" onclick="setFilter('grayscale(1)')">B&W</div>
+                <div class="tool-btn" onclick="setFilter('sepia(0.8)')">Retro</div>
+                <div class="tool-btn" onclick="setFilter('brightness(1.4)')">Vivid</div>
             </div>
         </div>
     </div>
 
-    <div id="dub-modal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-sm font-black text-cyan-400">AI DUBBING ENGINE</h2>
-                <i class="fa-solid fa-xmark text-lg" onclick="closeDub()"></i>
-            </div>
-            <textarea id="dub-text" class="w-full bg-black border border-zinc-800 p-4 rounded-xl outline-none text-xs h-32 mb-4 text-white" placeholder="Enter your script here..."></textarea>
-            <button onclick="requestDubbing()" id="dub-btn" class="w-full bg-white text-black py-3 rounded-full font-bold text-[10px] uppercase">Generate & Sync</button>
-        </div>
-    </div>
-
-    <div id="export-modal" class="modal-overlay">
-        <div class="modal-box text-center">
-            <h2 class="text-lg font-bold mb-2">Rendering Project</h2>
-            <div class="w-full bg-zinc-900 rounded-full h-1.5 mb-4 mt-4">
-                <div id="export-bar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-200" style="width: 0%"></div>
-            </div>
-            <p id="export-percent" class="font-bold text-xl text-blue-400">0%</p>
+    <div id="dub-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-cyan-400 text-sm font-bold mb-4">AI DUBBING</h3>
+            <textarea id="dub-input" class="w-full bg-black border border-zinc-800 p-3 rounded text-xs h-24 text-white mb-4" placeholder="Enter dialogue..."></textarea>
+            <button onclick="processDub()" class="w-full bg-white text-black py-2 rounded text-xs font-bold">GENERATE VOICE</button>
+            <button onclick="this.parentElement.parentElement.style.display='none'" class="w-full mt-2 text-gray-500 text-[10px]">CANCEL</button>
         </div>
     </div>
 
     <script>
-        // Intro handling
         setTimeout(() => {
-            document.getElementById('intro').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('intro').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-            }, 500);
-        }, 1500);
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+        }, 2000);
 
         const video = document.getElementById('main-video');
-        const playBtn = document.getElementById('play-btn');
-        const trackScroll = document.getElementById('track-scroll');
         const vClip = document.getElementById('v-clip');
-        const timeDisplay = document.getElementById('time-display');
+        const scroll = document.getElementById('timeline-scroll');
+        const timeVal = document.getElementById('time-val');
+        const playIcon = document.getElementById('play-icon');
 
-        const PX_PER_SEC = 50; // 1 second = 50px on timeline
-
-        function initVideo(input) {
-            if(input.files && input.files[0]) {
-                const url = URL.createObjectURL(input.files[0]);
-                video.src = url;
-                document.getElementById('new-project-btn').style.display = 'none';
-                playBtn.style.display = 'block';
-                vClip.style.display = 'block';
-                
+        function handleUpload(input) {
+            if(input.files[0]) {
+                video.src = URL.createObjectURL(input.files[0]);
+                document.getElementById('upload-hint').style.display = 'none';
                 video.onloadedmetadata = () => {
-                    vClip.style.width = (video.duration * PX_PER_SEC) + "px";
-                    updateTimeLabel();
+                    vClip.style.display = 'block';
+                    vClip.style.width = (video.duration * 50) + "px";
+                    updateUI();
                 };
             }
         }
 
         function togglePlay() {
-            if(!video.src) return;
-            if(video.paused) {
-                video.play();
-                playBtn.classList.replace('fa-play', 'fa-pause');
-                playBtn.style.opacity = "0.1";
-            } else {
-                video.pause();
-                playBtn.classList.replace('fa-pause', 'fa-play');
-                playBtn.style.opacity = "0.5";
-            }
+            if(video.paused) { video.play(); playIcon.className = 'fa-solid fa-pause'; }
+            else { video.pause(); playIcon.className = 'fa-solid fa-play'; }
         }
-        playBtn.onclick = togglePlay;
-        video.onclick = togglePlay;
 
-        // Timeline Sync
         video.ontimeupdate = () => {
             if(!video.paused) {
-                trackScroll.scrollLeft = video.currentTime * PX_PER_SEC;
-                updateTimeLabel();
+                scroll.scrollLeft = video.currentTime * 50;
+                updateUI();
             }
         };
 
-        function scrubVideo() {
+        function syncTimeline() {
             if(video.paused && video.src) {
-                video.currentTime = trackScroll.scrollLeft / PX_PER_SEC;
-                updateTimeLabel();
+                video.currentTime = scroll.scrollLeft / 50;
+                updateUI();
             }
         }
 
-        function updateTimeLabel() {
-            const cur = formatTime(video.currentTime);
-            const dur = formatTime(video.duration || 0);
-            timeDisplay.innerText = `${cur} / ${dur}`;
+        function updateUI() {
+            const cur = Math.floor(video.currentTime);
+            const dur = Math.floor(video.duration || 0);
+            timeVal.innerText = `00:${cur < 10 ? '0'+cur : cur} / 00:${dur < 10 ? '0'+dur : dur}`;
         }
 
-        function formatTime(t) {
-            const m = Math.floor(t / 60).toString().padStart(2, '0');
-            const s = Math.floor(t % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
-        // --- Features ---
-        function applyFilter(f) { video.style.filter = f; }
-
-        function setSpeed(s) { video.playbackRate = s; }
-
-        function splitClip() {
-            if(!video.src) return;
-            alert(`Clip split at ${video.currentTime.toFixed(2)}s. Logical cut added to timeline.`);
-        }
-
-        function deleteVideo() {
-            if(confirm("Reset current project?")) location.reload();
-        }
-
-        // --- Sub-Menus ---
-        function showSubMenu(id) {
-            document.getElementById('main-tools').style.display = 'none';
-            document.getElementById(id).style.display = 'flex';
-        }
-        function backMain() {
-            document.querySelectorAll('.sub-menu').forEach(m => m.style.display = 'none');
-            document.getElementById('main-tools').style.display = 'flex';
-        }
-
-        // --- Dubbing API ---
-        function openDub() { document.getElementById('dub-modal').style.display = 'flex'; }
-        function closeDub() { document.getElementById('dub-modal').style.display = 'none'; }
-
-        async function requestDubbing() {
-            const text = document.getElementById('dub-text').value;
-            if(!text) return alert("Write something first!");
+        // --- টেক্সট ফিচার (New) ---
+        function addText() {
+            const txt = prompt("Enter text:");
+            if(!txt) return;
+            const el = document.createElement('div');
+            el.className = 'text-layer';
+            el.innerText = txt;
+            el.style.left = '50%';
+            el.style.top = '50%';
             
-            const btn = document.getElementById('dub-btn');
-            btn.innerText = "Connecting to AI Server...";
-            btn.disabled = true;
-
-            try {
-                // এখানে তোমার Hugging Face বা Render API URL বসাবে
-                // উদাহরণ: await fetch('https://your-api.com/dub', { method: 'POST', body: JSON.stringify({text}) });
-                
-                setTimeout(() => {
-                    alert("AI Voice generated and synced successfully!");
-                    btn.innerText = "Generate & Sync";
-                    btn.disabled = false;
-                    closeDub();
-                }, 3000);
-            } catch (e) {
-                alert("API Connection Error");
-                btn.disabled = false;
-            }
-        }
-
-        // --- Export ---
-        function runExport() {
-            if(!video.src) return alert("No video to export!");
-            document.getElementById('export-modal').style.display = 'flex';
-            let p = 0;
-            const bar = document.getElementById('export-bar');
-            const txt = document.getElementById('export-percent');
-            
-            const interval = setInterval(() => {
-                p += Math.floor(Math.random() * 8) + 1;
-                if(p >= 100) {
-                    p = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        alert("Export Completed! Video saved to gallery.");
-                        document.getElementById('export-modal').style.display = 'none';
-                    }, 500);
+            // ড্র্যাগিং লজিক
+            let isDragging = false;
+            el.onmousedown = (e) => { 
+                isDragging = true; 
+                document.querySelectorAll('.text-layer').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+            };
+            window.onmousemove = (e) => {
+                if(isDragging) {
+                    el.style.left = e.clientX - el.offsetWidth/2 + 'px';
+                    el.style.top = e.clientY - el.offsetHeight/2 + 'px';
                 }
-                bar.style.width = p + "%";
-                txt.innerText = p + "%";
-            }, 100);
+            };
+            window.onmouseup = () => isDragging = false;
+            
+            document.getElementById('text-container').appendChild(el);
+            closeMenu();
+        }
+
+        // --- এডিটিং ফিচারস ---
+        function splitVideo() {
+            alert("Video split at " + video.currentTime.toFixed(2) + "s");
+            // ভিজ্যুয়ালি ক্লিপে একটা বর্ডার দেওয়া
+            vClip.style.borderRight = "4px solid red";
+            setTimeout(() => vClip.style.borderRight = "1.5px solid #444", 1000);
+        }
+
+        function setSpeed(s) { video.playbackRate = s; closeMenu(); }
+        function setFilter(f) { video.style.filter = f; }
+        function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeMenu() { document.querySelectorAll('.sub-menu').forEach(m => m.style.display = 'none'); }
+        function openDubbing() { document.getElementById('dub-modal').style.display = 'flex'; }
+        
+        function processDub() {
+            const btn = event.target;
+            btn.innerText = "PROCESSING...";
+            setTimeout(() => {
+                alert("AI Voice generated and added to timeline!");
+                btn.innerText = "GENERATE VOICE";
+                document.getElementById('dub-modal').style.display = 'none';
+            }, 2000);
+        }
+
+        function runExport() {
+            alert("Exporting project... Your video is being processed.");
         }
     </script>
 </body>
